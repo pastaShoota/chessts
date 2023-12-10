@@ -1,4 +1,7 @@
-import { Board, FileNumber, Position, RowNumber, Square, Piece } from "../model/definitions";
+import { Board, FileNumber, RowNumber, Square, Piece } from "../model/definitions";
+import { MovablePiece } from "../model/movable.piece";
+import { pieceComparator, toMovable } from "../model/piece.utils";
+import { Position } from "../model/position";
 
 const dummySquare: Square = {file: 'A', row: 1};
 
@@ -53,8 +56,10 @@ function generateEmptySquares(fromIx: number, length: number =1): Square[] {
 
 export function positionFromFen(fen: string): Position {
     const [fenRows, turn, castling, ] = fen.split(" ");
-    let squaresBuilder: Square[] = [];
+    const squaresBuilder: Square[] = [];
     let squareCounter = 0;
+    let sideToMove: MovablePiece[] = [];
+
     fenRows.split('/').reverse().forEach((row) => {
         row.split('').forEach((char) => {
             if (Number(char)) {
@@ -65,11 +70,17 @@ export function positionFromFen(fen: string): Position {
                 square.occupant = pieceFromFen(char);
                 squaresBuilder.push(square);
                 squareCounter++;
+
+                if (square.occupant?.color.startsWith(turn)) {
+                    sideToMove.push(toMovable(square.occupant));
+                }
             }
         });
     });
+    sideToMove = sideToMove.sort(pieceComparator); // place the king first
+    const board = squaresBuilder as Board;
     return {
-        board: squaresBuilder as Board,
-        sideToMove: [] // TODO upgrade side to move pieces to movable
+        board,
+        sideToMove
     };
 }

@@ -1,4 +1,3 @@
-import { MovablePiece } from "./movable.piece";
 
 export type PieceType = 'pawn'|'knight'|'bishop'|'rook'|'queen'|'king';
 export type PieceColor = 'black'|'white';
@@ -29,10 +28,4 @@ export type Move = {
     target: Square,
     promoteTo?: Piece,
     mutations: (board: Board) => Board,
-}
-
-export type Position = {
-    board: Board,
-    sideToMove: MovablePiece[],
-    // TODO: castling rights + en passant + half moves + full moves
 }

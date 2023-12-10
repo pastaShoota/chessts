@@ -1,5 +1,6 @@
 import { generateEmptyBoard, positionFromFen } from "./fen.utils";
 import { Piece } from "../model/definitions";
+import { MovablePiece } from "../model/movable.piece";
 
 describe('fen utils', ()=>{
     describe('generate empty board', () => {
@@ -56,7 +57,17 @@ describe('fen utils', ()=>{
             })
         });
         it('should give correct list of pieces from side to move', () => {
-            fail("not implemented");
+            const sideToMove = positionFromFen(fen).sideToMove;
+
+            expect(sideToMove).toBeInstanceOf(Array);
+            expect(sideToMove.length).toBe(2);
+            sideToMove.forEach((piece) => {
+                expect(piece).toBeInstanceOf(MovablePiece);
+                expect(piece.color).toBe('black'); // b letter in fen string
+            });
+            expect(sideToMove.map((piece) => piece.type)).toContain('king');
+            expect(sideToMove.map((piece) => piece.type)).toContain('pawn');
+            expect(sideToMove[0].type).toBe('king');
         });
     });
 });
