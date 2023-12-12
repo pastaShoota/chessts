@@ -1,9 +1,8 @@
+import { dummySquare, ixToCoordinates, ixToSquare } from "../model/board.utils";
 import { Board, FileNumber, RowNumber, Square, Piece } from "../model/definitions";
 import { MovablePiece } from "../model/movable.piece";
 import { pieceComparator, toMovable } from "../model/piece.utils";
-import { Position } from "../model/position";
-
-const dummySquare: Square = {file: 'A', row: 1};
+import { Position, buildPosition } from "../model/position";
 
 type fenPieceCode = 'p'|'n'|'b'|'r'|'q'|'k'|'P'|'N'|'B'|'R'|'Q'|'K';
 
@@ -21,18 +20,6 @@ const fenPieceMap: ReadonlyMap<fenPieceCode,Piece> = new Map([
     ['Q', {color: 'white', type: 'queen'}],
     ['K', {color: 'white', type: 'king'}],
 ]);
-
-function ixToCoordinates(ix: number): [FileNumber, RowNumber] {
-    const colNumber = String.fromCharCode('A'.charCodeAt(0) + ix % 8) as FileNumber;
-    const rowNumber = (Math.floor(ix / 8) + 1) as RowNumber;
-    return [colNumber, rowNumber]
-}
-
-function ixToSquare(ix: number): Square {
-    let square = {...dummySquare};
-    [square.file, square.row] = ixToCoordinates(ix);
-    return square;
-}
 
 export function generateEmptyBoard(): Board {
     return Array.from(Array(64).keys()).map((ix) => {
@@ -69,18 +56,18 @@ export function positionFromFen(fen: string): Position {
                 let square = generateEmptySquares(squareCounter)[0];
                 square.occupant = pieceFromFen(char);
                 squaresBuilder.push(square);
-                squareCounter++;
-
+                
                 if (square.occupant?.color.startsWith(turn)) {
-                    sideToMove.push(toMovable(square.occupant));
+                    const occupant = toMovable(square.occupant);
+                    occupant.location = ixToSquare(squareCounter);
+                    sideToMove.push(occupant);
                 }
+                squareCounter++;
             }
         });
     });
     sideToMove = sideToMove.sort(pieceComparator); // place the king first
     const board = squaresBuilder as Board;
-    return {
-        board,
-        sideToMove
-    };
+    
+    return buildPosition({board,sideToMove});
 }

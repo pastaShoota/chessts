@@ -1,6 +1,7 @@
 import { Bishop, King, Knight, Pawn, Queen, Rook } from "./movables";
-import { Piece } from "./definitions";
+import { Board, Move, Piece, Square } from "./definitions";
 import { MovablePiece } from "./movable.piece";
+import { squareToIx } from "./board.utils";
 
 export function toMovable(piece: Piece): MovablePiece {
     switch(piece.type) {
@@ -22,4 +23,15 @@ export function pieceComparator(a: Piece, b: Piece): number {
         return 1;
     }
     return 0;
+}
+
+export function basicMutations(move: Pick<Move, "source"|"target">): (board: Board) => Board {
+    return (board: Board) => {
+        const targetBoard = [...board];
+        targetBoard[squareToIx(move.source)] = {...board[squareToIx(move.source)]};
+        delete targetBoard[squareToIx(move.source)].occupant;
+        targetBoard[squareToIx(move.target)] = {...board[squareToIx(move.target)]};
+        targetBoard[squareToIx(move.target)].occupant = board[squareToIx(move.source)].occupant;
+        return targetBoard as Board;
+    }
 }
