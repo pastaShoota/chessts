@@ -67,7 +67,6 @@ export function positionFromFen(fen: string): Position {
             }
         });
     });
-    sideToMove = sideToMove.sort(pieceComparator); // place the king first
     const board = squaresBuilder as Board;
     
     return buildPosition({board,sideToMove});
