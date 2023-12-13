@@ -1,5 +1,5 @@
 import { Bishop, King, Knight, Pawn, Queen, Rook } from "./movables";
-import { Board, Move, Piece, Square } from "./definitions";
+import { Board, Move, Piece, PieceColor, Square } from "./definitions";
 import { MovablePiece } from "./movable.piece";
 import { squareToIx } from "./board.utils";
 
@@ -33,5 +33,13 @@ export function basicMutations(move: Pick<Move, "source"|"target">): (board: Boa
         targetBoard[squareToIx(move.target)] = {...board[squareToIx(move.target)]};
         targetBoard[squareToIx(move.target)].occupant = board[squareToIx(move.source)].occupant;
         return targetBoard as Board;
+    }
+}
+
+export function opposite(color: PieceColor): PieceColor {
+    switch(color) {
+        case 'white': return 'black';
+        case 'black': return 'white';
+        default: throw new Error("unexpected piece color state");
     }
 }

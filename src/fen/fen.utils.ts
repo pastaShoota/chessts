@@ -60,6 +60,7 @@ export function positionFromFen(fen: string): Position {
                 if (square.occupant?.color.startsWith(turn)) {
                     const occupant = toMovable(square.occupant);
                     occupant.location = ixToSquare(squareCounter);
+                    square.occupant = occupant;
                     sideToMove.push(occupant);
                 }
                 squareCounter++;

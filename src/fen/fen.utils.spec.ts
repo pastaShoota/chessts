@@ -34,14 +34,16 @@ describe('fen utils', ()=>{
             let occupant = board[36].occupant as Piece;
             expect(occupant.type).toBe('pawn');
             expect(occupant.color).toBe('black');
+            expect(occupant).toBeInstanceOf(MovablePiece);
             
             occupant = board[38].occupant as Piece;
             expect(occupant.type).toBe('king');
             expect(occupant.color).toBe('white');
-   
+            
             occupant = board[26].occupant as Piece;
             expect(occupant.type).toBe('king');
             expect(occupant.color).toBe('black');
+            expect(occupant).toBeInstanceOf(MovablePiece);
 
             occupant = board[28].occupant as Piece;
             expect(occupant.type).toBe('pawn');

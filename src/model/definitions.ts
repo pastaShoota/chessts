@@ -39,7 +39,7 @@ export const Directions = {
     DOWN_RIGHT: {cape: -7, edgeReached: (square: Square) => square.file === 'H' || square.row === 1 },
     DOWN: {cape: -8, edgeReached: (square: Square) => square.row === 1 },
     DOWN_LEFT: {cape: -9, edgeReached: (square: Square) => square.file === 'A' || square.row === 1 },
-    LEFT: {cape: -8, edgeReached: (square: Square) => square.file === 'A' },
+    LEFT: {cape: -1, edgeReached: (square: Square) => square.file === 'A' },
 } as const;
 
 export type Direction = typeof Directions[keyof typeof Directions];
