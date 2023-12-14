@@ -1,38 +1,55 @@
 import { MovablePiece } from "./movable.piece";
-import { Board, Move } from "./definitions";
+import { Board, CandidateMove, VerifiedMove } from "./definitions";
 import { pieceComparator } from "./piece.utils";
+import { positionFromFen } from "../fen/fen.utils";
 
 
 export interface Position {
     readonly board: Board,
     readonly sideToMove: MovablePiece[],
-    readonly check?: boolean,
+    readonly check: boolean,
     // TODO: castling rights + en passant + half moves + full moves
 
-    getMoves(): Move[],
+    getMoves(): VerifiedMove[],
 }
 
-type PositionStructure = Omit<Position, "getMoves">;
+export type PositionPlain = Omit<Position, "getMoves"|"check">;
 
-export function buildPosition(position: PositionStructure) {
+export function buildPosition(position: PositionPlain): Position {
     return new PositionImpl(position);
 }
 
 class PositionImpl implements Position {
     readonly check: boolean;
 
-    constructor(private position: PositionStructure) {
+    constructor(private position: PositionPlain) {
         this.position.sideToMove.sort(pieceComparator); // place king first
         this.check = this.position.sideToMove[0].isThreatened(this.board);
     }
 
-    getMoves(): Move[] {
-        throw new Error("Method not implemented.");
+    getMoves(): VerifiedMove[] {
+        return this.sideToMove.flatMap((piece) => piece.figureMoves(this.board))
+            .map((move) => {
+                if (move.verified) {
+                    return move;
+                }
+                return this.verify(move as CandidateMove);
+                
+                // remove nulls
+            }).filter((move) => move) as VerifiedMove[];
     }
 
-    private checkLegal(move: Move) {
+    private verify(move: CandidateMove): VerifiedMove | null {
         let board = move.mutations({...this.board});
 
+        if (this.sideToMove[0].isThreatened(board)) {
+            return null;
+        }
+
+        const resultingPosition: PositionPlain = positionFromFen(''); // TODO
+        let {mutations, ...result} = {...move, verified: true, resultingPosition};
+
+        return result;
     }
 
     public get board() {

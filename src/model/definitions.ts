@@ -1,3 +1,5 @@
+import { dummySquare } from "./board.utils";
+import { PositionPlain } from "./position";
 
 export type PieceType = 'pawn'|'knight'|'bishop'|'rook'|'queen'|'king';
 export type PieceColor = 'black'|'white';
@@ -23,13 +25,19 @@ type FixedSizeArray<N extends number, T> = {
 
 export type Board = FixedSizeArray<64, Square>;
 
-export type Move = {
+export type VerifiedMove = {
     source: Square,
     target: Square,
     promoteTo?: Piece,
+    resultingPosition: PositionPlain,
+    verified: boolean,
+}
+
+export type CandidateMove = Omit<VerifiedMove, "resultingPosition"> & {
     mutations: (board: Board) => Board,
 }
 
+export type Move = VerifiedMove | CandidateMove;
 
 export const Directions = {
     UP_LEFT: {cape: 7, edgeReached: (square: Square) => square.file === 'A' || square.row === 8 },
@@ -43,3 +51,5 @@ export const Directions = {
 } as const;
 
 export type Direction = typeof Directions[keyof typeof Directions];
+
+export type EndOfGame = "checkmate" | "draw-stalemate" | "timesup" | "whiteresigns" | "blackresigns" | "draw-repetition" | "draw-fiftymoves";

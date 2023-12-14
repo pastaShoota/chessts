@@ -1,5 +1,5 @@
 import { dummySquare, squareToIx } from "./board.utils";
-import { Board, Direction, Directions, Move, Piece, PieceColor, PieceType, Square } from "./definitions";
+import { Board, CandidateMove, Direction, Directions, VerifiedMove, Piece, PieceColor, PieceType, Square, Move } from "./definitions";
 import { opposite } from "./piece.utils";
 
 export abstract class MovablePiece implements Piece{
