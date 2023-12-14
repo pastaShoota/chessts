@@ -1,9 +1,9 @@
-import { VerifiedMove } from "../definitions";
+import { InternalMove } from "../definitions";
 import { MovablePiece } from "../movable.piece";
 
 export class Knight extends MovablePiece {
 
-    public figureMoves(): VerifiedMove[] {
+    public figureMoves(): InternalMove[] {
         throw new Error("Method not implemented.");
     }
 }

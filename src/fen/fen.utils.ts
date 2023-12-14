@@ -1,7 +1,7 @@
 import { dummySquare, ixToCoordinates, ixToSquare } from "../model/board.utils";
-import { Board, FileNumber, RowNumber, Square, Piece } from "../model/definitions";
+import { Board, Square, Piece } from "../model/definitions";
 import { MovablePiece } from "../model/movable.piece";
-import { pieceComparator, toMovable } from "../model/piece.utils";
+import { toMovable } from "../model/piece.utils";
 import { Position, buildPosition } from "../model/position";
 
 type fenPieceCode = 'p'|'n'|'b'|'r'|'q'|'k'|'P'|'N'|'B'|'R'|'Q'|'K';

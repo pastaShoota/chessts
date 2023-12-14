@@ -1,4 +1,4 @@
-import { Board, CandidateMove, Direction, Directions, VerifiedMove } from "../definitions";
+import { Board, Direction, Directions, InternalMove } from "../definitions";
 import { MovablePiece } from "../movable.piece";
 import { basicMutations } from "../piece.utils";
 
@@ -11,17 +11,17 @@ export class Bishop extends MovablePiece {
         Directions.DOWN_RIGHT,
     ];
 
-    public figureMoves(board: Board): CandidateMove[] {
+    public figureMoves(board: Board): InternalMove[] {
         return Bishop.directions.flatMap((direction) => super.probe(board, direction))
             .filter((finalSquare) => !(finalSquare.occupant instanceof MovablePiece)) // cannot take piece from same side
             .map((finalSquare) => {
-                let move = {
-                    source: this.location,
-                    target: finalSquare,
-                    mutations: (board: Board) => board,
+                const [source, target] = [this.location, finalSquare];
+                return {
+                    source,
+                    target,
+                    mutations: basicMutations({source, target}),
+                    verified: false,
                 }
-                move.mutations = basicMutations(move);
-                return move;
         });
     }
 }

@@ -1,5 +1,5 @@
 import { dummySquare, squareToIx } from "./board.utils";
-import { Board, CandidateMove, Direction, Directions, VerifiedMove, Piece, PieceColor, PieceType, Square, Move } from "./definitions";
+import { Board, Direction, Directions, InternalMove, Piece, PieceColor, PieceType, Square } from "./definitions";
 import { opposite } from "./piece.utils";
 
 export abstract class MovablePiece implements Piece{
@@ -12,7 +12,7 @@ export abstract class MovablePiece implements Piece{
         this.color = proto.color;
     }
 
-    public abstract figureMoves(board: Board): Move[];
+    public abstract figureMoves(board: Board): InternalMove[];
 
     protected probe(board: Board, direction: Direction, range: number = 8, separateSquare?: Square): Square[] {
         const result: Square[] = [];

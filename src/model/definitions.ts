@@ -25,19 +25,16 @@ type FixedSizeArray<N extends number, T> = {
 
 export type Board = FixedSizeArray<64, Square>;
 
-export type VerifiedMove = {
+export type Move = {
     source: Square,
     target: Square,
     promoteTo?: Piece,
-    resultingPosition: PositionPlain,
+}
+
+export type InternalMove = Move & {
+    mutations: (board: Board) => Board,
     verified: boolean,
 }
-
-export type CandidateMove = Omit<VerifiedMove, "resultingPosition"> & {
-    mutations: (board: Board) => Board,
-}
-
-export type Move = VerifiedMove | CandidateMove;
 
 export const Directions = {
     UP_LEFT: {cape: 7, edgeReached: (square: Square) => square.file === 'A' || square.row === 8 },

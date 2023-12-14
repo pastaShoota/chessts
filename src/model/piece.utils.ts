@@ -1,5 +1,5 @@
 import { Bishop, King, Knight, Pawn, Queen, Rook } from "./movables";
-import { Board, VerifiedMove, Piece, PieceColor, Square } from "./definitions";
+import { Board, Move, Piece, PieceColor } from "./definitions";
 import { MovablePiece } from "./movable.piece";
 import { squareToIx } from "./board.utils";
 
@@ -25,7 +25,7 @@ export function pieceComparator(a: Piece, b: Piece): number {
     return 0;
 }
 
-export function basicMutations(move: Pick<VerifiedMove, "source"|"target">): (board: Board) => Board {
+export function basicMutations(move: Move): (board: Board) => Board {
     return (board: Board) => {
         const targetBoard = [...board];
         targetBoard[squareToIx(move.source)] = {...board[squareToIx(move.source)]};
