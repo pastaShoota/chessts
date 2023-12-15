@@ -27,7 +27,8 @@ export function pieceComparator(a: Piece, b: Piece): number {
 
 export function basicMutations(move: Move): (board: Board) => Board {
     return (board: Board) => {
-        const targetBoard = [...board];
+        console.log(JSON.stringify(board));
+        const targetBoard = {...board};
         targetBoard[squareToIx(move.source)] = {...board[squareToIx(move.source)]};
         delete targetBoard[squareToIx(move.source)].occupant;
         targetBoard[squareToIx(move.target)] = {...board[squareToIx(move.target)]};

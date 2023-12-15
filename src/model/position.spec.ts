@@ -15,4 +15,13 @@ describe('position', () => {
             expect(positionFromFen(fen).check).toBe(true);
         });
     });
+    describe('get moves', () => {
+        // black bishop a8 king h8
+        // white bishop c6 king e4
+        const pos = positionFromFen('b6k/8/2B5/8/4K3/8/8/8 w - - 0 1');
+        it('should take account of pins', () => {
+            pos.getMoves().filter((move) => move.source.file === 'C' && move.source.row === 6);
+            // TODO
+        })
+    })
 });

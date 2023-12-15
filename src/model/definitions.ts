@@ -1,5 +1,3 @@
-import { dummySquare } from "./board.utils";
-import { PositionPlain } from "./position";
 
 export type PieceType = 'pawn'|'knight'|'bishop'|'rook'|'queen'|'king';
 export type PieceColor = 'black'|'white';

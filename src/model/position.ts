@@ -1,6 +1,6 @@
 import { MovablePiece } from "./movable.piece";
-import { Board, Move, InternalMove, Piece } from "./definitions";
-import { opposite, pieceComparator, toMovable } from "./piece.utils";
+import { Board, Move, InternalMove } from "./definitions";
+import { pieceComparator, toMovable } from "./piece.utils";
 
 export interface Position {
     readonly board: Board,
