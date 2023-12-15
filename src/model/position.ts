@@ -1,6 +1,6 @@
 import { MovablePiece } from "./movable.piece";
 import { Board, Move, InternalMove } from "./definitions";
-import { pieceComparator, toMovable } from "./piece.utils";
+import { pieceComparator, toMovable, moveAsString } from "./piece.utils";
 
 export interface Position {
     readonly board: Board,
@@ -36,12 +36,14 @@ class PositionImpl implements Position {
     
     play(move: Move): Position {
         const moveToPlay = this.doGetMoves().find((internalMove) => 
-            internalMove.source === move.source && internalMove.target === move.target && internalMove.promoteTo === move.promoteTo
+            moveAsString(internalMove) === moveAsString(move)
         );
         if (!moveToPlay) {
             throw new Error("Unexpected move " + JSON.stringify(move));
         }
+        console.log('board: ' + this.board + ' typeof board ' + (typeof this.board));
         const board = moveToPlay.mutations({...this.board});
+        console.log('board: ' + board + ' typeof board ' + (typeof board));
         const sideToMove: MovablePiece[] = [];
         board.forEach((square) => {
             if (square.occupant instanceof MovablePiece) { // remove movability from one side
@@ -73,7 +75,7 @@ class PositionImpl implements Position {
     }
 
     private verify(move: InternalMove): InternalMove {
-        let newBoard = move.mutations({...this.board});
+        let newBoard = move.mutations([...this.board]);
 
         if (this.sideToMove[0].isThreatened(newBoard)) {
             return move;

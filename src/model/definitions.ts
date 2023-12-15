@@ -16,12 +16,12 @@ export type Square = {
     occupant?: Piece,
 }
 
-type FixedSizeArray<N extends number, T> = {
+/*type FixedSizeArray<N extends number, T> = {
     //0: T,
     length: N
-} & ReadonlyArray<T>;
+} & ReadonlyArray<T>;*/
 
-export type Board = FixedSizeArray<64, Square>;
+export type Board = ReadonlyArray<Square>;
 
 export type Move = {
     source: Square,

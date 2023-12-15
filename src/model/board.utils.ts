@@ -1,4 +1,4 @@
-import { FileNumber, RowNumber, Square } from "./definitions";
+import { Board, FileNumber, RowNumber, Square } from "./definitions";
 
 export const dummySquare: Square = {file: 'A', row: 1};
 const lowSquare = dummySquare;
@@ -20,4 +20,22 @@ export function squareToIx(square: Square): number {
     const colOffset = square.file.charCodeAt(0) - lowSquare.file.charCodeAt(0);
 
     return 8 * rowOffset + colOffset;
+}
+
+export function squareFromString(square: string): Square {
+    const fileNumberPattern = /(A|B|C|D|E|F|G|H)/;
+    const rowNumberPattern = /(1|2|3|4|5|6|7|8)/;
+
+    const file = square.replace(fileNumberPattern, '\\1') as FileNumber;
+    const row = Number(square.replace(rowNumberPattern, '\\1')) as RowNumber;
+
+    return {file, row};
+}
+
+export function newChessBoard(): Board {
+    return Array.from(Array(64).keys()).map(ixToSquare);
+}
+
+export function duplicateBoard(): Board {
+    
 }

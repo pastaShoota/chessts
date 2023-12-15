@@ -1,4 +1,5 @@
-import { positionFromFen } from "../fen/fen.utils";
+import { positionFromFen, startingPositionFen } from "../fen/fen.utils";
+import { moveFromString } from "./piece.utils";
 
 describe('position', () => {
     describe('constructor', () => {
@@ -20,8 +21,27 @@ describe('position', () => {
         // white bishop c6 king e4
         const pos = positionFromFen('b6k/8/2B5/8/4K3/8/8/8 w - - 0 1');
         it('should take account of pins', () => {
-            pos.getMoves().filter((move) => move.source.file === 'C' && move.source.row === 6);
-            // TODO
-        })
-    })
+            const bishopMoves = pos.getMoves().filter((move) => move.source.file === 'C' && move.source.row === 6);
+            
+            expect(bishopMoves.length).toBe(3);
+            expect(bishopMoves).toEqual(expect.arrayContaining([
+                expect.objectContaining({ target: expect.objectContaining({file: 'A', row: 8})}),
+                expect.objectContaining({ target: expect.objectContaining({file: 'B', row: 7})}),
+                expect.objectContaining({ target: expect.objectContaining({file: 'D', row: 5})}),
+            ]));
+        });
+    });
+    describe('play move', () => {
+        it('should produce the expected position from start', () => {
+            const pos = positionFromFen(startingPositionFen)
+                .play(moveFromString('E2 E4'))
+                .play(moveFromString('D7 D5'))
+                .play(moveFromString('F1 B5'));
+
+            expect(pos.sideToMove[0].color).toBe('black');
+            expect(pos.check).toBe(true);
+            expect(pos.getMoves().length).toBe(5); // c6 Nc6 Nd7 Bd7 Qd7
+            // FIXME
+        });
+    });
 });

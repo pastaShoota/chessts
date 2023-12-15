@@ -1,4 +1,4 @@
-import { dummySquare, ixToCoordinates, ixToSquare } from "../model/board.utils";
+import { newChessBoard, dummySquare, ixToCoordinates, ixToSquare } from "../model/board.utils";
 import { Board, Square, Piece } from "../model/definitions";
 import { MovablePiece } from "../model/movable.piece";
 import { toMovable } from "../model/piece.utils";
@@ -33,41 +33,31 @@ function pieceFromFen(pieceLetter: string): Piece|undefined {
     return fenPieceMap.get(pieceLetter as fenPieceCode);
 }
 
-function generateEmptySquares(fromIx: number, length: number =1): Square[] {
-    if (fromIx < 0 || fromIx > 63 || length < 1 || length > 64) {
-        return [];
-    }
-    const indexes = Array.from(Array(length).keys()).map((x) => x + fromIx);
-    return indexes.map(ixToSquare);
-}
-
 export function positionFromFen(fen: string): Position {
     const [fenRows, turn, castling, ] = fen.split(" ");
-    const squaresBuilder: Square[] = [];
     let squareCounter = 0;
     let sideToMove: MovablePiece[] = [];
+    const board: Board = newChessBoard();
 
     fenRows.split('/').reverse().forEach((row) => {
         row.split('').forEach((char) => {
             if (Number(char)) {
-                squaresBuilder.push(...generateEmptySquares(squareCounter, Number(char)));
                 squareCounter += Number(char);
             } else {
-                let square = generateEmptySquares(squareCounter)[0];
-                square.occupant = pieceFromFen(char);
-                squaresBuilder.push(square);
+                const occupant = pieceFromFen(char);
                 
-                if (square.occupant?.color.startsWith(turn)) {
-                    const occupant = toMovable(square.occupant);
-                    occupant.location = ixToSquare(squareCounter);
-                    square.occupant = occupant;
-                    sideToMove.push(occupant);
+                if (occupant?.color.startsWith(turn)) {
+                    const movable = toMovable(occupant);
+                    movable.location = ixToSquare(squareCounter);
+                    board[squareCounter].occupant = movable;
+                    sideToMove.push(movable);
+                } else {
+                    board[squareCounter].occupant = occupant;
                 }
                 squareCounter++;
             }
         });
     });
-    const board = squaresBuilder as Board;
     
     return buildPosition({board,sideToMove});
 }
