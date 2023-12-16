@@ -65,7 +65,19 @@ export abstract class MovablePiece implements Piece{
     }
 
     private isThreatenedByKnight(board: Board, square?: Square) {
-        //TODO
-        return false;
+        const directions = [
+            Directions.KNIGHT_DOWN_LEFT,
+            Directions.KNIGHT_DOWN_RIGHT,
+            Directions.KNIGHT_UP_LEFT,
+            Directions.KNIGHT_UP_RIGHT,
+            Directions.KNIGHT_LEFT_DOWN,
+            Directions.KNIGHT_LEFT_UP,
+            Directions.KNIGHT_RIGHT_DOWN,
+            Directions.KNIGHT_RIGHT_UP,
+        ];
+        const RANGE = 1;
+        return directions.flatMap((direction) => this.probe(board, direction, RANGE, square))
+            .filter((otherSquare) => otherSquare.occupant?.color === opposite(this.color) && 'knight' === otherSquare.occupant?.type)
+            .length > 0;
     }
 }

@@ -43,6 +43,15 @@ export const Directions = {
     DOWN: {cape: -8, edgeReached: (square: Square) => square.row === 1 },
     DOWN_LEFT: {cape: -9, edgeReached: (square: Square) => square.file === 'A' || square.row === 1 },
     LEFT: {cape: -1, edgeReached: (square: Square) => square.file === 'A' },
+
+    KNIGHT_UP_LEFT: {cape: 15, edgeReached: (square: Square) => square.file === 'A' || square.row >= 7},
+    KNIGHT_UP_RIGHT: {cape: 17, edgeReached: (square: Square) => square.file === 'H' || square.row >= 7},
+    KNIGHT_DOWN_LEFT: {cape: -17, edgeReached: (square: Square) => square.file === 'A' || square.row <= 2},
+    KNIGHT_DOWN_RIGHT: {cape: -15, edgeReached: (square: Square) => square.file === 'H' || square.row <= 2},
+    KNIGHT_LEFT_UP: {cape: 6, edgeReached: (square: Square) => square.file === 'A' || square.file === 'B' || square.row === 8},
+    KNIGHT_RIGHT_UP: {cape: 10, edgeReached: (square: Square) => square.file === 'H' || square.file === 'G' || square.row === 8},
+    KNIGHT_LEFT_DOWN: {cape: -10, edgeReached: (square: Square) => square.file === 'A' || square.file === 'B' || square.row === 1},
+    KNIGHT_RIGHT_DOWN: {cape: -6, edgeReached: (square: Square) => square.file === 'H' || square.file === 'G' || square.row === 1},
 } as const;
 
 export type Direction = typeof Directions[keyof typeof Directions];
