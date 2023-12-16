@@ -7,7 +7,18 @@ describe('pawn', () => {
         // black pawn d5 e5 g5 b3 king g8
         // white pawn e4 f4 a2 h6 king e2
         const position = positionFromFen("6k1/8/7P/3pp1p1/4PP2/1p6/P3K3/8 w - - 0 1");
-        
+        const blackPos = positionFromFen("6k1/8/7P/3pp1p1/4PP2/1p6/P3K3/8 b - - 0 1");
+
+        it('should figure black moves as well', () => {
+            const pawnB3 = blackPos.board[squareToIx({file: 'B', row: 3})].occupant as MovablePiece;
+
+            const moves = pawnB3.figureMoves(blackPos.board);
+            expect(moves.length).toBe(2);
+            expect(moves).toEqual(expect.arrayContaining([
+                expect.objectContaining({target: expect.objectContaining({file:'A', row: 2})}),
+                expect.objectContaining({target: expect.objectContaining({file:'B', row: 2})}),
+            ]));
+        });
         it('should figure move only', () => {
             const pawnH6 = position.board[squareToIx({file: 'H', row: 6})].occupant as MovablePiece;
             

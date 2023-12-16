@@ -1,4 +1,5 @@
 import { positionFromFen, startingPositionFen } from "../fen/fen.utils";
+import { MovablePiece } from "./movable.piece";
 import { moveFromString } from "./piece.utils";
 
 describe('position', () => {
@@ -36,9 +37,13 @@ describe('position', () => {
             const pos = positionFromFen(startingPositionFen)
                 .play(moveFromString('E2 E4'))
                 .play(moveFromString('D7 D5'))
-                .play(moveFromString('F1 B5'));
+                .play(moveFromString('F1 B5'))
+                ;
+
 
             expect(pos.sideToMove[0].color).toBe('black');
+            console.log(JSON.stringify(pos.getMoves()));
+            pos.sideToMove.forEach((piece) => expect(piece).toBeInstanceOf(MovablePiece));
             expect(pos.check).toBe(true);
             expect(pos.getMoves().length).toBe(5); // c6 Nc6 Nd7 Bd7 Qd7
             // FIXME

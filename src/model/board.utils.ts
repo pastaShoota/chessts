@@ -36,6 +36,10 @@ export function newChessBoard(): Board {
     return Array.from(Array(64).keys()).map(ixToSquare);
 }
 
-export function duplicateBoard(): Board {
-    
+export function halfDeepCopy(board: Board): Board {
+    const copy = [...board];
+    board.forEach((item, ix) => {
+        copy[ix] = {...item};
+    });
+    return copy;
 }

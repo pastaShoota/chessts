@@ -1,6 +1,7 @@
 import { MovablePiece } from "./movable.piece";
 import { Board, Move, InternalMove } from "./definitions";
 import { pieceComparator, toMovable, moveAsString } from "./piece.utils";
+import { halfDeepCopy } from "./board.utils";
 
 export interface Position {
     readonly board: Board,
@@ -41,9 +42,8 @@ class PositionImpl implements Position {
         if (!moveToPlay) {
             throw new Error("Unexpected move " + JSON.stringify(move));
         }
-        console.log('board: ' + this.board + ' typeof board ' + (typeof this.board));
-        const board = moveToPlay.mutations({...this.board});
-        console.log('board: ' + board + ' typeof board ' + (typeof board));
+        console.log('board: ' + JSON.stringify(this.board) + ' typeof board ' + (typeof this.board));
+        const board = moveToPlay.mutations(this.board);
         const sideToMove: MovablePiece[] = [];
         board.forEach((square) => {
             if (square.occupant instanceof MovablePiece) { // remove movability from one side
@@ -51,10 +51,13 @@ class PositionImpl implements Position {
                 square.occupant = {type, color};
             } else if (square.occupant) { // give it to the other
                 const piece = toMovable(square.occupant);
+                const {file, row} = {...square};
+                piece.location = {file, row};
                 square.occupant = piece;
                 sideToMove.push(piece);
             }
         });
+        console.log('board: ' + JSON.stringify(board));
 
         return buildPosition({board, sideToMove});
     }
@@ -62,6 +65,7 @@ class PositionImpl implements Position {
     private doGetMoves(): InternalMove[] {
         if (!this.moves) {
             this.moves = this.computeMoves() || [];
+            console.log(`computed ${this.moves?.length} moves`);
         }
         return this.moves;
     }
@@ -75,7 +79,7 @@ class PositionImpl implements Position {
     }
 
     private verify(move: InternalMove): InternalMove {
-        let newBoard = move.mutations([...this.board]);
+        let newBoard = move.mutations(halfDeepCopy(this.board));
 
         if (this.sideToMove[0].isThreatened(newBoard)) {
             return move;
