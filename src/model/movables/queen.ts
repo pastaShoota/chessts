@@ -1,10 +1,20 @@
-import { InternalMove } from "../definitions";
-import { MovablePiece } from "../movable.piece";
+import { Direction, Directions, InternalMove } from "../definitions";
+import { BasicPiece } from "./basic.piece";
 
-export class Queen extends MovablePiece {
-
-    public figureMoves(): InternalMove[] {
-        return [];
-        // TODO
+export class Queen extends BasicPiece {
+    protected getRange(): number {
+        return 7;
+    }
+    protected getDirections(): Direction[] {
+        return [
+            Directions.DOWN,
+            Directions.DOWN_LEFT,
+            Directions.DOWN_RIGHT,
+            Directions.LEFT,
+            Directions.RIGHT,
+            Directions.UP,
+            Directions.UP_LEFT,
+            Directions.UP_RIGHT,
+        ]
     }
 }
