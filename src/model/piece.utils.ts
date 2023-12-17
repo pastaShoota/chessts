@@ -43,11 +43,15 @@ export function opposite(color: PieceColor): PieceColor {
 }
 
 export function moveAsString(move: Move): string {
-    return move.source.file + move.source.row + ' ' + move.target.file + move.target.row;
+    let result = move.source.file + move.source.row + ' ' + move.target.file + move.target.row;
+    if (move.promoteTo) {
+        result += ('=' + move.promoteTo.charAt(0).toUpperCase());
+    }
+    return result;
 }
 
 export function moveFromString(move: string): Move {
-    const [sourceFile, sourceRow, targetFile, targetRow, promoteTo] = move.split(/ ?/);
+    const [sourceFile, sourceRow, targetFile, targetRow, promoteTo] = move.split(/[ =]?/);
 
     const fileNumberPattern = /(A|B|C|D|E|F|G|H)/;
     const rowNumberPattern = /(1|2|3|4|5|6|7|8)/;
@@ -58,9 +62,17 @@ export function moveFromString(move: string): Move {
             targetRow && targetRow.match(rowNumberPattern))) {
                 throw new Error("parse error move from string " + move);
     }
-    return {
+    const result: Move = {
         source: {file: sourceFile as FileNumber, row: Number(sourceRow) as RowNumber}, 
         target: {file: targetFile as FileNumber, row: Number(targetRow) as RowNumber}, 
-        // promoteTo: promoteTo TODO
     }
+    if(promoteTo && promoteTo.toUpperCase() in {'N':'', 'B':'', 'R':'', 'Q': ''}) {
+        switch(promoteTo.toLocaleUpperCase()){
+            case 'N': result.promoteTo = 'knight'; break;
+            case 'B': result.promoteTo = 'bishop'; break;
+            case 'R': result.promoteTo = 'rook'; break;
+            case 'Q': result.promoteTo = 'queen'; break;
+        }
+    }
+    return result;
 }

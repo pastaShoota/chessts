@@ -1,6 +1,7 @@
-import { Board, Direction, Directions, InternalMove } from "../definitions";
+import { squareToIx } from "../board.utils";
+import { Board, Direction, Directions, InternalMove, PieceType } from "../definitions";
 import { MovablePiece } from "../movable.piece";
-import { basicMutations, opposite } from "../piece.utils";
+import { basicMutations, opposite, toMovable } from "../piece.utils";
 
 const [PAWN_STEP, PAWN_LEAP] = [1, 2];
 
@@ -31,14 +32,27 @@ export class Pawn extends MovablePiece {
             .filter((finalSquare) => finalSquare.occupant?.color === opposite(this.color));
         const moveSquares = super.probe(board, this.moveDirection(), this.moveRange())
             .filter((finalSquare) => !finalSquare.occupant);
-        return [...captureSquares, ...moveSquares].map((finalSquare) => {
+        return [...captureSquares, ...moveSquares].flatMap((finalSquare) => {
                 const [source, target] = [this.location, finalSquare];
-                return {
+                const result = {
                     source,
                     target,
-                    mutations: basicMutations({source, target}),
+                    
                     verified: false,
+                };
+                if (this.moveDirection().edgeReached(finalSquare)) {
+                    // Promotion
+                    return (['knight','bishop','rook','queen'] as PieceType[]).map((promoteTo) => {
+                        return {...result, promoteTo,
+                        mutations: (board) => {
+                            let targetBoard = basicMutations({source, target})(board);
+                            targetBoard[squareToIx(target)].occupant = toMovable({color: this.color, type: promoteTo});
+                            console.log('promoting to '+ promoteTo + ' ' + JSON.stringify(targetBoard[squareToIx(target)].occupant));
+                            return targetBoard;
+                        }}
+                    })
                 }
+                return {...result, mutations: basicMutations({source, target})};
         });
     }
 

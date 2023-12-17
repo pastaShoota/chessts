@@ -1,10 +1,16 @@
-import { InternalMove } from "../definitions";
-import { MovablePiece } from "../movable.piece";
+import { Direction, Directions, InternalMove } from "../definitions";
+import { BasicPiece } from "./basic.piece";
 
-export class Rook extends MovablePiece {
-
-    public figureMoves(): InternalMove[] {
-        return [];
-        // TODO
+export class Rook extends BasicPiece {
+    protected getRange(): number {
+        return 7;
+    }
+    protected getDirections(): Direction[] {
+        return [
+            Directions.UP,
+            Directions.DOWN,
+            Directions.LEFT,
+            Directions.RIGHT,
+        ]
     }
 }

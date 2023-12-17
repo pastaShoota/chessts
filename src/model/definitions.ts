@@ -26,7 +26,7 @@ export type Board = ReadonlyArray<Square>;
 export type Move = {
     source: Square,
     target: Square,
-    promoteTo?: Piece,
+    promoteTo?: PieceType,
 }
 
 export type InternalMove = Move & {

@@ -1,6 +1,7 @@
 import { positionFromFen } from "../../fen/fen.utils";
 import { squareToIx } from "../board.utils";
 import { MovablePiece } from "../movable.piece";
+import { moveFromString } from "../piece.utils";
 
 describe('pawn', () => {
     describe('figure moves', () => {
@@ -70,6 +71,37 @@ describe('pawn', () => {
                 source: {file: 'A', row: 2},
                 target: {file: 'A', row: 4},
             })]));
+        });
+    });
+    describe('promotion', () => {
+        // pawn nearing promotion
+        const position = positionFromFen("6k1/8/8/8/8/8/1p6/R1N4K b - - 0 1");
+        const pawnB2 = position.board[squareToIx({file: 'B', row: 2})].occupant as MovablePiece;
+
+        it("should figure both take + promotion and promotion alone", () => {
+            const moves = pawnB2.figureMoves(position.board);
+
+            expect(moves).toEqual(expect.arrayContaining([
+                expect.objectContaining({target: expect.objectContaining({file: 'A', row: 1}), promoteTo: 'knight'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'A', row: 1}), promoteTo: 'bishop'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'A', row: 1}), promoteTo: 'rook'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'A', row: 1}), promoteTo: 'queen'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'B', row: 1}), promoteTo: 'knight'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'B', row: 1}), promoteTo: 'bishop'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'B', row: 1}), promoteTo: 'rook'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'B', row: 1}), promoteTo: 'queen'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'C', row: 1}), promoteTo: 'knight'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'C', row: 1}), promoteTo: 'bishop'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'C', row: 1}), promoteTo: 'rook'}),
+                expect.objectContaining({target: expect.objectContaining({file: 'C', row: 1}), promoteTo: 'queen'}),
+            ]));
+        });
+        it("should transform to the demanded promoted type", () => {
+            const takeAndPromoteToRookPos = position.play(moveFromString("B2 A1=Q"));
+
+            // expect black queen on A1 and no more black pawn on b2
+            expect(takeAndPromoteToRookPos.board[0]).toHaveProperty('occupant', expect.objectContaining({color: 'black', type: 'queen'}));
+            expect(takeAndPromoteToRookPos.board[9]).not.toHaveProperty('occupant');
         });
     });
 });
