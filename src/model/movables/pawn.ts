@@ -29,7 +29,7 @@ export class Pawn extends MovablePiece {
 
     public figureMoves(board: Board): InternalMove[] {
         const captureSquares = this.captureDirections().flatMap((direction) => super.probe(board, direction, PAWN_STEP))
-            .filter((finalSquare) => finalSquare.occupant?.color === opposite(this.color));
+            .filter((finalSquare) => finalSquare.occupant?.color === opposite(this.color) || finalSquare.enPassantTarget);
         const moveSquares = super.probe(board, this.moveDirection(), this.moveRange())
             .filter((finalSquare) => !finalSquare.occupant);
         return [...captureSquares, ...moveSquares].flatMap((finalSquare) => {
@@ -51,9 +51,26 @@ export class Pawn extends MovablePiece {
                         }}
                     })
                 }
+                if (moveSquares.length > 1 && finalSquare.row === moveSquares[1].row) {
+                    // double step => set En passant
+                    return {...result, mutations: (board) => {
+                        let targetBoard = basicMutations({source, target})(board);
+                        // console.log("setting en passant on square " + JSON.stringify(moveSquares[0]));
+                        targetBoard[squareToIx(moveSquares[0])].enPassantTarget = true;
+                        return targetBoard;
+                    }};
+                }
+                if (finalSquare.enPassantTarget) {
+                    // taking en passant -> make opponent pawn disappear
+                    return {...result, mutations: (board) => {
+                        let targetBoard = basicMutations({source, target})(board);
+                        const squareOfTakenPawn = targetBoard[squareToIx(finalSquare) - this.moveDirection().cape];
+                        console.log("erasing pawn (en passant): " + JSON.stringify(squareOfTakenPawn));
+                        delete squareOfTakenPawn.occupant;
+                        return targetBoard;
+                    }};
+                }
                 return {...result, mutations: basicMutations({source, target})};
         });
     }
-
-    // TODO en passant
 }

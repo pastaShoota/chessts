@@ -7,7 +7,7 @@ export interface Position {
     readonly board: Board,
     readonly sideToMove: MovablePiece[],
     readonly check: boolean,
-    // TODO: castling rights + en passant + half moves + full moves
+    // TODO: castling rights + half moves + full moves
 
     getMoves(): Move[],
     play(move: Move | string): Position,
@@ -43,7 +43,7 @@ class PositionImpl implements Position {
         if (!moveToPlay) {
             throw new Error("Unexpected move " + JSON.stringify(move));
         }
-        console.log('board: ' + JSON.stringify(this.board) + ' typeof board ' + (typeof this.board));
+        //console.log('board: ' + JSON.stringify(this.board) + ' typeof board ' + (typeof this.board));
         const board = moveToPlay.mutations(this.board);
         const sideToMove: MovablePiece[] = [];
         board.forEach((square) => {
@@ -58,7 +58,7 @@ class PositionImpl implements Position {
                 sideToMove.push(piece);
             }
         });
-        console.log('board: ' + JSON.stringify(board));
+        //console.log('board: ' + JSON.stringify(board));
 
         return buildPosition({board, sideToMove});
     }

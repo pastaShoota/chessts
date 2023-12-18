@@ -1,4 +1,4 @@
-import { newChessBoard, halfDeepCopy } from "./board.utils";
+import { newChessBoard, halfDeepCopy, squareFromString } from "./board.utils";
 
 describe("board utils", () => {
     describe("half deep copy", () => {
@@ -21,6 +21,15 @@ describe("board utils", () => {
 
             expect(board[1].occupant).toBeUndefined();
             expect(board[0].occupant).toEqual(expect.objectContaining({type: 'king', color:'white'}));
+        });
+    });
+
+    describe("square from string", () => {
+        it("should convert string to corresponding square", () => {
+            expect(squareFromString("E3")).toEqual(expect.objectContaining({
+                file: 'E',
+                row: 3,
+            }))
         });
     });
 });

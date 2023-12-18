@@ -42,11 +42,9 @@ describe('position', () => {
 
 
             expect(pos.sideToMove[0].color).toBe('black');
-            console.log(JSON.stringify(pos.getMoves()));
             pos.sideToMove.forEach((piece) => expect(piece).toBeInstanceOf(MovablePiece));
             expect(pos.check).toBe(true);
             expect(pos.getMoves().length).toBe(5); // c6 Nc6 Nd7 Bd7 Qd7
-            // FIXME
         });
     });
 });

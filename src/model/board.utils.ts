@@ -15,7 +15,8 @@ export function ixToSquare(ix: number): Square {
     return square;
 }
 
-export function squareToIx(square: Square): number {
+export function squareToIx(squareArg: Square|string): number {
+    const square = typeof squareArg === 'string' ? squareFromString(squareArg) : squareArg;
     const rowOffset = square.row - 1;
     const colOffset = square.file.charCodeAt(0) - lowSquare.file.charCodeAt(0);
 
@@ -23,11 +24,11 @@ export function squareToIx(square: Square): number {
 }
 
 export function squareFromString(square: string): Square {
-    const fileNumberPattern = /(A|B|C|D|E|F|G|H)/;
-    const rowNumberPattern = /(1|2|3|4|5|6|7|8)/;
+    const fileNumberPattern = /.*(A|B|C|D|E|F|G|H).*/;
+    const rowNumberPattern = /.*(1|2|3|4|5|6|7|8).*/;
 
-    const file = square.replace(fileNumberPattern, '\\1') as FileNumber;
-    const row = Number(square.replace(rowNumberPattern, '\\1')) as RowNumber;
+    const file = square.replace(fileNumberPattern, '$1') as FileNumber;
+    const row = Number(square.replace(rowNumberPattern, '$1')) as RowNumber;
 
     return {file, row};
 }
@@ -36,10 +37,13 @@ export function newChessBoard(): Board {
     return Array.from(Array(64).keys()).map(ixToSquare);
 }
 
-export function halfDeepCopy(board: Board): Board {
+export function halfDeepCopy(board: Board, forgetEnPassant: boolean = true): Board {
     const copy = [...board];
     board.forEach((item, ix) => {
         copy[ix] = {...item};
+        if (forgetEnPassant) {
+            delete copy[ix].enPassantTarget;
+        }
     });
     return copy;
 }

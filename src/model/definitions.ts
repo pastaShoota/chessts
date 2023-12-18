@@ -14,6 +14,7 @@ export type Square = {
     file: FileNumber,
     row: RowNumber,
     occupant?: Piece,
+    enPassantTarget?: boolean,
 }
 
 /*type FixedSizeArray<N extends number, T> = {
