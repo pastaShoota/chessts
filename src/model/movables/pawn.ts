@@ -37,7 +37,6 @@ export class Pawn extends MovablePiece {
                 const result = {
                     source,
                     target,
-                    
                     verified: false,
                 };
                 if (this.moveDirection().edgeReached(finalSquare)) {
@@ -57,5 +56,4 @@ export class Pawn extends MovablePiece {
     }
 
     // TODO en passant
-    // TODO promotion
 }

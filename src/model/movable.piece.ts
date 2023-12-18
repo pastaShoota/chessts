@@ -21,6 +21,9 @@ export abstract class MovablePiece implements Piece{
         while(!direction.edgeReached(square) && result.length < range && square.occupant?.color !== this.color) {
             square = board[squareToIx(square) + direction.cape];
             result.push(square);
+            if(square.occupant) {
+                break;
+            }
         }
         return result;
     }

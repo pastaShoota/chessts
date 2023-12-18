@@ -97,11 +97,22 @@ describe('pawn', () => {
             ]));
         });
         it("should transform to the demanded promoted type", () => {
-            const takeAndPromoteToRookPos = position.play(moveFromString("B2 A1=Q"));
+            const takeAndPromoteToRookPos = position.play("B2 A1=Q");
 
             // expect black queen on A1 and no more black pawn on b2
             expect(takeAndPromoteToRookPos.board[0]).toHaveProperty('occupant', expect.objectContaining({color: 'black', type: 'queen'}));
             expect(takeAndPromoteToRookPos.board[9]).not.toHaveProperty('occupant');
+        });
+        it("promote and test playing on for a few moves", () => {
+            const takeAndPromoteOnCheck = position.play("B2 C1=Q");
+
+            expect(takeAndPromoteOnCheck.check).toBe(true);
+            expect(takeAndPromoteOnCheck.getMoves().length).toBe(3); // Kg2 Kh2 Rxc1
+            const onlyKingLeft = takeAndPromoteOnCheck.play("H1 H2")
+                .play("C1 A1");
+
+            expect(onlyKingLeft.sideToMove.length).toEqual(1);
+            expect(onlyKingLeft.getMoves().length).toEqual(3); // Kg2 Kg3 Kh3   1st rank guarded
         });
     });
 });

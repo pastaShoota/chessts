@@ -1,6 +1,6 @@
 import { MovablePiece } from "./movable.piece";
 import { Board, Move, InternalMove } from "./definitions";
-import { pieceComparator, toMovable, moveAsString } from "./piece.utils";
+import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
 import { halfDeepCopy } from "./board.utils";
 
 export interface Position {
@@ -10,7 +10,7 @@ export interface Position {
     // TODO: castling rights + en passant + half moves + full moves
 
     getMoves(): Move[],
-    play(move: Move): Position,
+    play(move: Move | string): Position,
 }
 
 export type PositionPlain = Pick<Position, "board"|"sideToMove">;
@@ -35,7 +35,8 @@ class PositionImpl implements Position {
         });
     }
     
-    play(move: Move): Position {
+    play(moveArg: Move | string): Position {
+        const move: Move = typeof moveArg === "string" ? moveFromString(moveArg as string) : moveArg as Move;
         const moveToPlay = this.doGetMoves().find((internalMove) => 
             moveAsString(internalMove) === moveAsString(move)
         );
