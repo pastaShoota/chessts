@@ -39,12 +39,50 @@ describe('position', () => {
                 .play(moveFromString('D7 D5'))
                 .play(moveFromString('F1 B5'))
                 ;
-
-
+                
             expect(pos.sideToMove[0].color).toBe('black');
             pos.sideToMove.forEach((piece) => expect(piece).toBeInstanceOf(MovablePiece));
             expect(pos.check).toBe(true);
             expect(pos.getMoves().length).toBe(5); // c6 Nc6 Nd7 Bd7 Qd7
         });
+    });
+    describe('castling', () => {
+        describe('castling right loss', () => {
+            it('should all four rights on initial pos', () => {
+                const pos = positionFromFen(startingPositionFen);
+                
+                expect(pos.castlings).toEqual('KQkq');
+            });
+            it('should remove both rights on king move', () => {
+            const pos = positionFromFen(startingPositionFen)
+                .play(moveFromString('F2 F4'))
+                .play(moveFromString('D7 D5'))
+                .play(moveFromString('E1 F2'))
+                ;
+            
+                expect(pos.castlings).toEqual('kq');
+            });
+            it('should remove kingside right on kingrook move', () => {
+                const pos = positionFromFen(startingPositionFen)
+                    .play(moveFromString('H2 H4'))
+                    .play(moveFromString('D7 D5'))
+                    .play(moveFromString('H1 H2'))
+                ;
+                
+                expect(pos.castlings).toEqual('Qkq');
+            });
+            it('should remove queenside right on queenrook taken', () => {
+                const pos = positionFromFen(startingPositionFen)
+                .play(moveFromString('G2 G4'))
+                    .play(moveFromString('B7 B5'))
+                    .play(moveFromString('F1 G2'))
+                    .play(moveFromString('G8 F6'))
+                    .play(moveFromString('G2 A8'))
+                    ;
+                    
+                    expect(pos.castlings).toEqual('KQk');
+            });
+        });
+        // TODO castle moves
     });
 });

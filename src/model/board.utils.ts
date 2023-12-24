@@ -23,12 +23,20 @@ export function squareToIx(squareArg: Square|string): number {
     return 8 * rowOffset + colOffset;
 }
 
-export function squareFromString(square: string): Square {
-    const fileNumberPattern = /.*(A|B|C|D|E|F|G|H).*/;
-    const rowNumberPattern = /.*(1|2|3|4|5|6|7|8).*/;
+export function squareEqual(squareArg1: Square|string, squareArg2: Square|string): boolean {
+    return squareToIx(squareArg1) === squareToIx(squareArg2);
+}
 
-    const file = square.replace(fileNumberPattern, '$1') as FileNumber;
-    const row = Number(square.replace(rowNumberPattern, '$1')) as RowNumber;
+export function squareFromString(square: string): Square {
+    const fileNumberPattern = /[^A-H]/g;
+    const rowNumberPattern = /[^1-8]/g;
+
+    const fileMatches = square.replace(fileNumberPattern, '');
+    const file = fileMatches.length > 0 ? fileMatches[0] as FileNumber : 'A';
+    const rowMatches = square.replace(rowNumberPattern, '');
+    const row = rowMatches.length > 0 ? Number(rowMatches[0]) as RowNumber : 1;
+
+    // return A1 by default
 
     return {file, row};
 }
