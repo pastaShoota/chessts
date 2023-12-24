@@ -1,7 +1,8 @@
 import { MovablePiece } from "./movable.piece";
-import { Board, Move, InternalMove, castlingRights } from "./definitions";
+import { Board, Move, InternalMove, CASTLES } from "./definitions";
 import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
 import { halfDeepCopy, squareEqual, squareToIx } from "./board.utils";
+import { reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
 
 export interface Position {
     readonly board: Board,
@@ -59,7 +60,7 @@ class PositionImpl implements Position {
                 sideToMove.push(piece);
             }
         });
-        const castlings = this.reevaluateCastlings(move);
+        const castlings = reevaluateCastlingRights(this.castlings, move);
         //console.log('board: ' + JSON.stringify(board));
 
         return buildPosition({board, sideToMove, castlings});
@@ -88,18 +89,6 @@ class PositionImpl implements Position {
             return move;
         }
         return {...move, verified: true};
-    }
-
-    private reevaluateCastlings(move: Move): string {
-        let result = this.castlings;
-        castlingRights.filter((castlingRight) => this.castlings.includes(castlingRight.id))
-            .forEach((castlingRight) => {
-                if ([move.source, move.target].find((moveSquare) => 
-                    castlingRight.involvedSquares.find((castleSquare) => squareEqual(moveSquare, castleSquare)))) {
-                    result = result.replace(castlingRight.id, '');
-                }
-            });
-        return result;
     }
 
     public get board() {

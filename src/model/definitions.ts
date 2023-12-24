@@ -59,14 +59,14 @@ export type Direction = typeof Directions[keyof typeof Directions];
 
 export type EndOfGame = "checkmate" | "draw-stalemate" | "timesup" | "whiteresigns" | "blackresigns" | "draw-repetition" | "draw-fiftymoves";
 
-export type castling = 'q'|'k'|'Q'|'K';
+export type CastleId = 'q'|'k'|'Q'|'K';
 
-export type castlingRight = {
-    id: castling,
+export type Castle = {
+    id: CastleId,
     involvedSquares: string[],
 }
 
-export const castlingRights: castlingRight[] = [
+export const CASTLES: Castle[] = [
     {
         id: 'q',
         involvedSquares: ['A8', 'E8'],
