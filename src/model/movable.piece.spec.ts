@@ -7,10 +7,10 @@ describe('movable piece', () => {
         // starting position using FEN: white pawn on c5 black bishop on e5 white king on g5, black king on c4 white pawn on e4 black knight on c7
         const position = positionFromFen('8/2n5/8/2P1b1K1/2k1P3/8/8/8 w - - 0 1');
         const whiteKing = position.sideToMove[0];
-        const pawnC5 = position.board[squareToIx({file: "C", row: 5})].occupant as MovablePiece;
-        const pawnE4 = position.board[squareToIx({file: "E", row: 4})].occupant as MovablePiece;
-        const squareH8 = position.board[squareToIx({file: "H", row: 8})];
-        const squareA8 = position.board[squareToIx({file: "A", row: 8})];
+        const pawnC5 = position.board[squareToIx("C5")].occupant as MovablePiece;
+        const pawnE4 = position.board[squareToIx("E4")].occupant as MovablePiece;
+        const squareH8 = position.board[squareToIx("H8")];
+        const squareA8 = position.board[squareToIx("A8")];
 
         it('should figure threat from king', () => {
             expect(position.sideToMove).toContain(pawnC5);

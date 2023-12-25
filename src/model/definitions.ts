@@ -63,24 +63,8 @@ export type CastleId = 'q'|'k'|'Q'|'K';
 
 export type Castle = {
     id: CastleId,
+    color: PieceColor,
     involvedSquares: string[],
+    move: Move,
+    mutations: (board: Board) => Board,
 }
-
-export const CASTLES: Castle[] = [
-    {
-        id: 'q',
-        involvedSquares: ['A8', 'E8'],
-    },
-    {
-        id: 'k',
-        involvedSquares: ['H8', 'E8'],
-    },
-    {
-        id: 'Q',
-        involvedSquares: ['A1', 'E1'],
-    },
-    {
-        id: 'K',
-        involvedSquares: ['H1', 'E1'],
-    },
-]

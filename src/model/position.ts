@@ -1,8 +1,8 @@
 import { MovablePiece } from "./movable.piece";
-import { Board, Move, InternalMove, CASTLES } from "./definitions";
+import { Board, Move, InternalMove } from "./definitions";
 import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
 import { halfDeepCopy, squareEqual, squareToIx } from "./board.utils";
-import { reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
+import { figureCastleMoves, reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
 
 export interface Position {
     readonly board: Board,
@@ -75,11 +75,13 @@ class PositionImpl implements Position {
     }
 
     private computeMoves() {
-        return this.sideToMove.flatMap((piece) => piece.figureMoves(this.board))
+        const pieceMoves = this.sideToMove.flatMap((piece) => piece.figureMoves(this.board))
             // verify moves if not already done
             .map((move) => move.verified ? move : this.verify(move))
             // retain only verified (aka legal) moves
             .filter((move) => move.verified);
+        const castleMoves = figureCastleMoves(this);
+        return [...pieceMoves, ...castleMoves];
     }
 
     private verify(move: InternalMove): InternalMove {
