@@ -1,7 +1,7 @@
 import { MovablePiece } from "./movable.piece";
-import { Board, Move, InternalMove } from "./definitions";
+import { Board, Move, InternalMove, EndOfGame } from "./definitions";
 import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
-import { halfDeepCopy, squareEqual, squareToIx } from "./board.utils";
+import { halfDeepCopy, } from "./board.utils";
 import { figureCastleMoves, reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
 
 export interface Position {
@@ -9,6 +9,7 @@ export interface Position {
     readonly sideToMove: MovablePiece[],
     readonly check: boolean,
     readonly castlings: string,
+    end?: EndOfGame,
     // TODO: castling rights + half moves + full moves
 
     getMoves(): Move[],
@@ -69,8 +70,15 @@ class PositionImpl implements Position {
     private doGetMoves(): InternalMove[] {
         if (!this.moves) {
             this.moves = this.computeMoves() || [];
-            console.log(`computed ${this.moves?.length} moves`);
+            //console.log(`computed ${this.moves?.length} moves`);
         }
+        // Determine of game
+        if (this.moves.length < 1) {
+            // no move: checkmate or stalemate TODO
+        }
+        // if 50 moves -> draw TODO
+        // if too little material left -> draw TODO
+        // if same position repeated 3 times -> draw TODO
         return this.moves;
     }
 
