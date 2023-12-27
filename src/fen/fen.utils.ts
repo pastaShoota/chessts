@@ -34,7 +34,7 @@ function pieceFromFen(pieceLetter: string): Piece|undefined {
 }
 
 export function positionFromFen(fen: string): Position {
-    const [fenRows, turn, castlings, ] = fen.split(" ");
+    const [fenRows, turn, castlings, enPassant, halfMoves, fullMovesStr ] = fen.split(" ");
     let squareCounter = 0;
     let sideToMove: MovablePiece[] = [];
     const board: Board = newChessBoard();
@@ -59,7 +59,9 @@ export function positionFromFen(fen: string): Position {
         });
     });
     
-    return buildPosition({board,sideToMove,castlings});
+    const fullMoves = Number(fullMovesStr) || 1;
+    
+    return buildPosition({board,sideToMove,castlings,fullMoves});
 }
 
 export const startingPositionFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

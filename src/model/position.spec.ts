@@ -167,11 +167,11 @@ describe('position', () => {
         it("should raise checkmate when it happens", () => {
             let pos = positionFromFen(startingPositionFen);
 
-            expect(pos.end).toBeUndefined();
+            expect(pos.ended).toBeFalsy();
             pos = pos.play("F2 F3").play("E7 E5");
-            expect(pos.end).toBeUndefined();
+            expect(pos.ended).toBeFalsy();
             pos = pos.play("G2 G4").play("D8 H4");
-            expect(pos.end).toEqual("checkmate");
+            expect(pos.ended).toEqual("checkmate");
             expect(pos.check).toBe(true);
             expect(pos.getMoves()).toHaveLength(0);
         });
@@ -180,19 +180,34 @@ describe('position', () => {
         it("should raise stalemate when it happens", () => {
             let pos = initialPosWithJustKingsAndRooks;
     
-            expect(pos.end).toBeUndefined();
+            expect(pos.ended).toBeFalsy();
             pos = pos.play("H1 H8").play("E8 F7");
-            expect(pos.end).toBeUndefined();
+            expect(pos.ended).toBeFalsy();
             pos = pos.play("H8 A8").play("F7 G7");
-            expect(pos.end).toBeUndefined();
+            expect(pos.ended).toBeFalsy();
             pos = pos.play("A8 A7").play("G7 G8");
-            expect(pos.end).toBeUndefined();
+            expect(pos.ended).toBeFalsy();
             pos = pos.play("E1 C1").play("G8 H8");
-            expect(pos.end).toBeUndefined();
+            expect(pos.ended).toBeFalsy();
             pos = pos.play("D1 G1");
-            expect(pos.end).toEqual("draw-stalemate");
+            expect(pos.ended).toEqual("draw-stalemate");
             expect(pos.check).toBe(false);
             expect(pos.getMoves()).toHaveLength(0);
         });
     });
+    describe('full moves', () => {
+        it('should increment each time it is white to play', () => {
+            let pos = positionFromFen(startingPositionFen);
+
+            expect(pos.fullMoves).toEqual(1);
+            pos = pos.play("E2 E4");
+            expect(pos.fullMoves).toEqual(1);
+            pos = pos.play("E7 E5");
+            expect(pos.fullMoves).toEqual(2);
+            pos = pos.play("D2 D4");
+            expect(pos.fullMoves).toEqual(2);
+            pos = pos.play("D7 D5");
+            expect(pos.fullMoves).toEqual(3);
+        });
+    })
 });

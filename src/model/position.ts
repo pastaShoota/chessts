@@ -9,17 +9,18 @@ export interface Position {
     readonly sideToMove: MovablePiece[],
     readonly check: boolean,
     readonly castlings: string,
-    readonly end?: EndOfGame,
+    readonly ended?: EndOfGame,
+    readonly fullMoves: number,
     // TODO: castling rights + half moves + full moves
 
     getMoves(): Move[],
     play(move: Move | string): Position,
 }
 
-export type PositionPlain = Pick<Position, "board"|"sideToMove"|"castlings">;
+export type PositionPlain = Pick<Position, "board"|"sideToMove"|"castlings"> & {fullMoves?: number};
 
-export function buildPosition(position: PositionPlain): Position {
-    return new PositionImpl(position);
+export function buildPosition(positionPlain: PositionPlain): Position {
+    return new PositionImpl(positionPlain);
 }
 
 class PositionImpl implements Position {
@@ -63,8 +64,9 @@ class PositionImpl implements Position {
         });
         const castlings = reevaluateCastlingRights(this.castlings, move);
         //console.log('board: ' + JSON.stringify(board));
+        const fullMoves = this.sideToMove[0].color === 'black' ? this.fullMoves + 1 : this.fullMoves;
 
-        return buildPosition({board, sideToMove, castlings});
+        return buildPosition({board, sideToMove, castlings, fullMoves});
     }
     
     private doGetMoves(): InternalMove[] {
@@ -76,7 +78,7 @@ class PositionImpl implements Position {
     }
     
     // Determine end of game
-    get end(): EndOfGame|undefined {
+    get ended(): EndOfGame|undefined {
         if (this.doGetMoves().length < 1) {
             return this.check ? 'checkmate' : 'draw-stalemate';
         }
@@ -113,5 +115,8 @@ class PositionImpl implements Position {
     }
     public get castlings() {
         return this.position.castlings;
+    }
+    public get fullMoves() {
+        return this.position.fullMoves || 1;
     }
 }
