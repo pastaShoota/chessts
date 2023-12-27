@@ -4,6 +4,8 @@ import { MovablePiece } from "./movable.piece";
 import { moveFromString } from "./piece.utils";
 
 describe('position', () => {
+    const initialPosWithJustKingsAndRooks = positionFromFen('r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1');
+
     describe('constructor', () => {
         it('should set check to false when king not in check', () => {
             // starting pos with 1 e4 d5 
@@ -83,7 +85,6 @@ describe('position', () => {
             });
         });
         describe("castling moves", () => {
-            const initialPosWithJustKingsAndRooks = positionFromFen('r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1');
             const movesWithWhiteQueenCastlling = expect.arrayContaining([
                 expect.objectContaining({source: squareFromString("E1"), target: squareFromString("C1")}) 
             ]);
@@ -160,6 +161,38 @@ describe('position', () => {
                 expect(pos.board[squareToIx("G8")]).toHaveProperty('occupant', expect.objectContaining({color: 'black', type: 'king'}));
                 expect(pos.board[squareToIx("F8")]).toHaveProperty('occupant', expect.objectContaining({color: 'black', type: 'rook'}));
             });
+        });
+    });
+    describe('checkmate', () => {
+        it("should raise checkmate when it happens", () => {
+            let pos = positionFromFen(startingPositionFen);
+
+            expect(pos.end).toBeUndefined();
+            pos = pos.play("F2 F3").play("E7 E5");
+            expect(pos.end).toBeUndefined();
+            pos = pos.play("G2 G4").play("D8 H4");
+            expect(pos.end).toEqual("checkmate");
+            expect(pos.check).toBe(true);
+            expect(pos.getMoves()).toHaveLength(0);
+        });
+    });
+    describe('stalemate', () => {
+        it("should raise stalemate when it happens", () => {
+            let pos = initialPosWithJustKingsAndRooks;
+    
+            expect(pos.end).toBeUndefined();
+            pos = pos.play("H1 H8").play("E8 F7");
+            expect(pos.end).toBeUndefined();
+            pos = pos.play("H8 A8").play("F7 G7");
+            expect(pos.end).toBeUndefined();
+            pos = pos.play("A8 A7").play("G7 G8");
+            expect(pos.end).toBeUndefined();
+            pos = pos.play("E1 C1").play("G8 H8");
+            expect(pos.end).toBeUndefined();
+            pos = pos.play("D1 G1");
+            expect(pos.end).toEqual("draw-stalemate");
+            expect(pos.check).toBe(false);
+            expect(pos.getMoves()).toHaveLength(0);
         });
     });
 });

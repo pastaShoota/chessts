@@ -9,7 +9,7 @@ export interface Position {
     readonly sideToMove: MovablePiece[],
     readonly check: boolean,
     readonly castlings: string,
-    end?: EndOfGame,
+    readonly end?: EndOfGame,
     // TODO: castling rights + half moves + full moves
 
     getMoves(): Move[],
@@ -72,14 +72,18 @@ class PositionImpl implements Position {
             this.moves = this.computeMoves() || [];
             //console.log(`computed ${this.moves?.length} moves`);
         }
-        // Determine of game
-        if (this.moves.length < 1) {
-            // no move: checkmate or stalemate TODO
+        return this.moves;
+    }
+    
+    // Determine end of game
+    get end(): EndOfGame|undefined {
+        if (this.doGetMoves().length < 1) {
+            return this.check ? 'checkmate' : 'draw-stalemate';
         }
         // if 50 moves -> draw TODO
         // if too little material left -> draw TODO
         // if same position repeated 3 times -> draw TODO
-        return this.moves;
+        return undefined;
     }
 
     private computeMoves() {
