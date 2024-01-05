@@ -1,5 +1,6 @@
 import { positionFromFen, startingPositionFen } from "../fen/fen.utils";
 import { squareFromString, squareToIx } from "./board.utils";
+import { EndOfGame } from "./definitions";
 import { MovablePiece } from "./movable.piece";
 import { moveFromString } from "./piece.utils";
 
@@ -198,7 +199,7 @@ describe('position', () => {
     describe('full moves', () => {
         it('should increment each time it is white to play', () => {
             let pos = positionFromFen(startingPositionFen);
-
+            
             expect(pos.fullMoves).toEqual(1);
             pos = pos.play("E2 E4");
             expect(pos.fullMoves).toEqual(1);
@@ -209,5 +210,42 @@ describe('position', () => {
             pos = pos.play("D7 D5");
             expect(pos.fullMoves).toEqual(3);
         });
-    })
+    });
+    describe('half moves', () => {
+        it('should start from zero', () => {
+            let pos = positionFromFen(startingPositionFen);
+            
+            expect(pos.halfMoves).toEqual(0);
+        });
+        it('should increment on each non pawn nor take move', () => {
+            let pos = positionFromFen(startingPositionFen);
+            
+            pos = pos.play("G1 F3");
+            expect(pos.halfMoves).toEqual(1);
+            pos = pos.play("G8 F6").play("B1 C3").play("B8 C6");
+            expect(pos.halfMoves).toEqual(4);
+        });
+        it('should restart from zero on a pawn move and on take move', () => {
+            let pos = positionFromFen(startingPositionFen);
+            
+            pos = pos.play("E2 E4");
+            expect(pos.halfMoves).toEqual(0);
+            pos = pos.play("B8 C6").play("F1 A6");
+            expect(pos.halfMoves).toEqual(2);
+            pos = pos.play("B7 A6");
+            expect(pos.halfMoves).toEqual(0);
+        });
+        it('should end when the move count reaches 100', () => {
+            let pos = positionFromFen(startingPositionFen);
+
+            for (let i=0; i<25; i++) {
+                expect(pos.ended).toBeFalsy();
+                pos = pos.play("G1 F3").play("G8 F6").play("F3 G1").play("F6 G8");
+            }
+            expect(pos.halfMoves).toEqual(100);
+            const drawFifty: EndOfGame = 'draw-fiftymoves';
+            expect(pos.ended).toEqual(drawFifty);
+            expect(pos.getMoves()).toHaveLength(0);
+        });
+    });
 });

@@ -1,7 +1,7 @@
 import { MovablePiece } from "./movable.piece";
 import { Board, Move, InternalMove, EndOfGame } from "./definitions";
 import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
-import { halfDeepCopy, } from "./board.utils";
+import { halfDeepCopy, squareToIx, } from "./board.utils";
 import { figureCastleMoves, reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
 
 export interface Position {
@@ -11,13 +11,13 @@ export interface Position {
     readonly castlings: string,
     readonly ended?: EndOfGame,
     readonly fullMoves: number,
-    // TODO: castling rights + half moves + full moves
+    readonly halfMoves: number,
 
     getMoves(): Move[],
     play(move: Move | string): Position,
 }
 
-export type PositionPlain = Pick<Position, "board"|"sideToMove"|"castlings"> & {fullMoves?: number};
+export type PositionPlain = Pick<Position, "board"|"sideToMove"|"castlings"> & {fullMoves?: number, halfMoves?: number};
 
 export function buildPosition(positionPlain: PositionPlain): Position {
     return new PositionImpl(positionPlain);
@@ -33,7 +33,7 @@ class PositionImpl implements Position {
     }
 
     getMoves(): Move[] {
-        return this.doGetMoves().map((move) => {
+        return this.ended ? [] : this.doGetMoves().map((move) => {
             const {source, target, promoteTo} = {...move};
             return {source, target, promoteTo}; // only return Move fields
         });
@@ -65,8 +65,9 @@ class PositionImpl implements Position {
         const castlings = reevaluateCastlingRights(this.castlings, move);
         //console.log('board: ' + JSON.stringify(board));
         const fullMoves = this.sideToMove[0].color === 'black' ? this.fullMoves + 1 : this.fullMoves;
+        const halfMoves = this.isTakeOrPawnMove(moveToPlay) ? 0 : this.halfMoves + 1;
 
-        return buildPosition({board, sideToMove, castlings, fullMoves});
+        return buildPosition({board, sideToMove, castlings, fullMoves, halfMoves});
     }
     
     private doGetMoves(): InternalMove[] {
@@ -82,7 +83,9 @@ class PositionImpl implements Position {
         if (this.doGetMoves().length < 1) {
             return this.check ? 'checkmate' : 'draw-stalemate';
         }
-        // if 50 moves -> draw TODO
+        if (this.halfMoves >= 100)  {
+            return 'draw-fiftymoves';
+        }
         // if too little material left -> draw TODO
         // if same position repeated 3 times -> draw TODO
         return undefined;
@@ -107,6 +110,12 @@ class PositionImpl implements Position {
         return {...move, verified: true};
     }
 
+    private isTakeOrPawnMove(move: Move): boolean {
+        const movingPiece = this.board[squareToIx(move.source)].occupant;
+        const targetPiece = this.board[squareToIx(move.target)].occupant;
+        return movingPiece?.type === 'pawn' || !!targetPiece;
+    }
+
     public get board() {
         return this.position.board;
     }
@@ -118,5 +127,8 @@ class PositionImpl implements Position {
     }
     public get fullMoves() {
         return this.position.fullMoves || 1;
+    }
+    public get halfMoves() {
+        return this.position.halfMoves || 0;
     }
 }
