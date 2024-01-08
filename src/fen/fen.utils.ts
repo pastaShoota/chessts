@@ -64,4 +64,54 @@ export function positionFromFen(fen: string): Position {
     return buildPosition({board,sideToMove,castlings,fullMoves});
 }
 
+export function positionToFen(position: Position): string {
+    const fenBoard = [...position.board].sort(fenSquareOrder).map((square) => [[square]]).reduce((accumulator: Square[][], currentValue: Square[][]) => {
+        // group squares eight by eight
+        if (accumulator[accumulator.length - 1].length < 8) {
+            accumulator[accumulator.length - 1].push(currentValue[0][0]);
+        } else {
+            accumulator.push(currentValue[0]);
+        }
+        return accumulator;
+    }, [[]]).map((row: Square[]) => {
+        const rowAsString:string = row.map((square) => {
+            switch(square.occupant?.type){
+                case 'bishop': return square.occupant.color === 'black' ? 'b' : 'B';
+                case 'king': return square.occupant.color === 'black' ? 'k' : 'K';
+                case 'knight': return square.occupant.color === 'black' ? 'n' : 'N';
+                case 'pawn': return square.occupant.color === 'black' ? 'p' : 'P';
+                case 'queen': return square.occupant.color === 'black' ? 'q' : 'Q';
+                case 'rook': return square.occupant.color === 'black' ? 'r' : 'R';
+                default: return '1';
+            }
+        }).join('').replace(/(1+)/g, function(match, p1){
+            return ('' + p1).length + '';
+        });
+        return rowAsString;
+    }).join('/');
+
+    const colorToPlay = position.sideToMove[0].color.charAt(0);
+
+    const castlingRights = position.castlings || "-";
+
+    const enPassant = position.board.find((square) => square.enPassantTarget);
+    const enPassantStr = enPassant ? enPassant.file.toLowerCase() + enPassant.row : '-';
+
+    const halfMoves = position.halfMoves || "0";
+
+    const fullMoves = position.fullMoves || "1";
+
+    return `${fenBoard} ${colorToPlay} ${castlingRights} ${enPassantStr} ${halfMoves} ${fullMoves}`;
+}
+
+function fenSquareOrder(square1: Square, square2: Square): number {
+    if (square1.row > square2.row) {
+        return -1;
+    }
+    if (square1.row < square2.row) {
+        return 1;
+    }
+    return square1.file.localeCompare(square2.file);
+}
+
 export const startingPositionFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
