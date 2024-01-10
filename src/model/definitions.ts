@@ -57,7 +57,7 @@ export const Directions = {
 
 export type Direction = typeof Directions[keyof typeof Directions];
 
-export type EndOfGame = "checkmate" | "draw-stalemate" | "timesup" | "whiteresigns" | "blackresigns" | "draw-repetition" | "draw-fiftymoves";
+export type EndOfGame = "checkmate" | "draw-stalemate" | "timesup" | "whiteresigns" | "blackresigns" | "draw-repetition" | "draw-fiftymoves" | "draw-nomate";
 
 export type CastleId = 'q'|'k'|'Q'|'K';
 

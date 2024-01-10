@@ -6,6 +6,7 @@ import { moveFromString } from "./piece.utils";
 
 describe('position', () => {
     const initialPosWithJustKingsAndRooks = positionFromFen('r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1');
+    const minorPiecesEndGame = positionFromFen('8/7P/6n1/8/8/8/8/k1K5 w - - 0 1');
 
     describe('constructor', () => {
         it('should set check to false when king not in check', () => {
@@ -328,6 +329,40 @@ describe('position', () => {
 
             pos = pos.play("C1 F4").play("C8 D7").play("F4 C1").play("D7 C8"); // fourth time reached (but 3rd since last castling right loss)
             expect(pos.ended).toEqual(drawRepetition);
+        });
+    });
+    describe('draw little material', () => {
+        const drawNomate: EndOfGame = "draw-nomate";
+        // end game position: white pawn h7 black knight g6 black king a1 white king c1
+
+        it("should draw on both bare kings", () => {
+            let pos = minorPiecesEndGame.play("H7 H8 Q");
+            expect(pos.ended).toBeFalsy();
+            
+            pos = pos.play("G6 E5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("H8 E5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("A1 A2").play("E5 A1").play("A2 A1");
+
+            expect(pos.ended).toEqual(drawNomate);
+        });
+        it("should draw on last mighty piece gone", () => {
+            let pos = minorPiecesEndGame.play("H7 H8 Q");
+            expect(pos.ended).toBeFalsy();
+
+            pos = pos.play("G6 H8");
+            expect(pos.ended).toEqual(drawNomate);
+        });
+        it("should draw only when one single minor piece remains", () => {
+            let pos = minorPiecesEndGame.play("H7 H8 B");
+            expect(pos.ended).toBeFalsy();
+            
+            pos = pos.play("G6 E5");
+            expect(pos.ended).toBeFalsy();
+            
+            pos = pos.play("H8 E5");
+            expect(pos.ended).toEqual(drawNomate);
         });
     });
 });

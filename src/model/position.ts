@@ -98,7 +98,16 @@ class PositionImpl implements Position {
         if (this.halfMoves >= 100)  {
             return 'draw-fiftymoves';
         }
-        // if too little material left -> draw TODO
+        // if too little material left
+        if (this.sideToMove.length <=2) {
+            const remainingPieces = this.board.filter((square) => square.occupant).map((square) => square.occupant)
+                .filter((piece) => piece?.type !== 'king');
+            // draw if no more than one piece no other than a knight or bishop
+            if (remainingPieces.length <= 1 && 
+                remainingPieces.every((piece) => piece?.type === 'knight' || piece?.type === 'bishop')) {
+                return 'draw-nomate';
+            }
+        }
      
         // if current position already repeated twice
         if (this.game.previousFens.filter((fen) => samePosition(fen, this.toFen())).length > 1) {
