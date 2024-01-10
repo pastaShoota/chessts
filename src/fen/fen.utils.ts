@@ -1,5 +1,5 @@
 import { newChessBoard, dummySquare, ixToCoordinates, ixToSquare } from "../model/board.utils";
-import { Board, Square, Piece } from "../model/definitions";
+import { Board, Square, Piece, Game } from "../model/definitions";
 import { MovablePiece } from "../model/movable.piece";
 import { toMovable } from "../model/piece.utils";
 import { Position, buildPosition } from "../model/position";
@@ -60,8 +60,10 @@ export function positionFromFen(fen: string): Position {
     });
     
     const fullMoves = Number(fullMovesStr) || 1;
+
+    const game: Game = {previousFens: [], currentFen: fen};
     
-    return buildPosition({board,sideToMove,castlings,fullMoves});
+    return buildPosition({board,sideToMove,castlings,fullMoves, game});
 }
 
 export function positionToFen(position: Position): string {
@@ -112,6 +114,17 @@ function fenSquareOrder(square1: Square, square2: Square): number {
         return 1;
     }
     return square1.file.localeCompare(square2.file);
+}
+
+export function samePosition(fen1: string, fen2: string): boolean {
+    // just consider board, turn, and castling rights
+    const [fen1split, fen2split] = [fen1.split(' '), fen2.split(' ')];
+    if (fen1split.length > 2 && fen2split.length > 2) {
+        return fen1split[0] === fen2split[0] &&
+            fen1split[1] === fen2split[1] &&
+            fen1split[2] === fen2split[2];
+    }
+    return false;
 }
 
 export const startingPositionFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";

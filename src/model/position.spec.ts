@@ -235,17 +235,99 @@ describe('position', () => {
             pos = pos.play("B7 A6");
             expect(pos.halfMoves).toEqual(0);
         });
-        it('should end when the move count reaches 100', () => {
+        it('should end when the move count reaches 100 (50 moves draw)', () => {
             let pos = positionFromFen(startingPositionFen);
 
-            for (let i=0; i<25; i++) {
-                expect(pos.ended).toBeFalsy();
-                pos = pos.play("G1 F3").play("G8 F6").play("F3 G1").play("F6 G8");
-            }
+            
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("G1 F3").play("G8 F6").play("F3 G1").play("F6 G8");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("B1 C3").play("B8 C6").play("G1 F3").play("G8 F6");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("C3 E4").play("C6 E5").play("F3 D4").play("F6 D5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("E4 G3").play("E5 G6").play("D4 B3").play("D5 B6");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("G3 H5").play("G6 H4").play("B3 A5").play("B6 A4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("H5 F4").play("H4 F5").play("A5 C4").play("A4 C5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("F4 D5").play("F5 D4").play("C4 E5").play("C5 E4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("D5 B4").play("D4 B5").play("E5 G4").play("E4 G5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("B4 A6").play("B5 A3").play("G4 H6").play("G5 H3");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("H1 G1").play("H8 G8");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("A6 C5").play("A3 C4").play("H6 F5").play("H3 F4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("C5 E4").play("C4 E5").play("F5 D4").play("F4 D5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("E4 G3").play("E5 G6").play("D4 B3").play("D5 B6");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("G3 H5").play("G6 H4").play("B3 A5").play("B6 A4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("H5 F4").play("H4 F5").play("A5 C4").play("A4 C5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("F4 D5").play("F5 D4").play("C4 E5").play("C5 E4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("D5 B4").play("D4 B5").play("E5 G4").play("E4 G5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("B4 A6").play("B5 A3").play("G4 H6").play("G5 H3");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("A1 B1").play("A8 B8");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("A6 C5").play("A3 C4").play("H6 F5").play("H3 F4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("C5 E4").play("C4 E5").play("F5 D4").play("F4 D5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("E4 G3").play("E5 G6").play("D4 B3").play("D5 B6");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("G3 H5").play("G6 H4").play("B3 A5").play("B6 A4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("H5 F4").play("H4 F5").play("A5 C4").play("A4 C5");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("F4 D5").play("F5 D4").play("C4 E5").play("C5 E4");
+            expect(pos.ended).toBeFalsy();
+            pos = pos.play("D5 B4").play("D4 B5").play("E5 G4").play("E4 G5"); 
+            
+            
             expect(pos.halfMoves).toEqual(100);
             const drawFifty: EndOfGame = 'draw-fiftymoves';
             expect(pos.ended).toEqual(drawFifty);
             expect(pos.getMoves()).toHaveLength(0);
+        });
+    });
+    describe("draw by repetition", () => {
+        const drawRepetition: EndOfGame = 'draw-repetition';
+
+        it("should happen as soon as the same position is reached the third time (regardless of enPassant target on the first occurrence)", () => {
+            let pos = positionFromFen(startingPositionFen);
+
+            pos = pos.play("D2 D4").play("D7 D5"); // First time reached (btw note that en passant target is now active, but should not count for future comparisons)
+            expect(pos.ended).toBeFalsy();
+            
+            pos = pos.play("G1 F3").play("G8 F6").play("F3 G1").play("F6 G8"); // second time reached
+            expect(pos.ended).toBeFalsy();
+
+            pos = pos.play("C1 F4").play("C8 D7").play("F4 C1").play("D7 C8"); // third time reached
+            expect(pos.ended).toEqual(drawRepetition);
+        });
+        it("should not happen if castling rights changed in between", () => {
+            let pos = positionFromFen(startingPositionFen);
+
+            pos = pos.play("D2 D4").play("D7 D5"); // First time reached
+            expect(pos.ended).toBeFalsy();
+            
+            pos = pos.play("E1 D2").play("G8 F6").play("D2 E1").play("F6 G8"); // second time reached
+            expect(pos.ended).toBeFalsy();
+
+            pos = pos.play("C1 F4").play("C8 D7").play("F4 C1").play("D7 C8"); // third time reached
+            expect(pos.ended).toBeFalsy();
+
+            pos = pos.play("C1 F4").play("C8 D7").play("F4 C1").play("D7 C8"); // fourth time reached (but 3rd since last castling right loss)
+            expect(pos.ended).toEqual(drawRepetition);
         });
     });
 });

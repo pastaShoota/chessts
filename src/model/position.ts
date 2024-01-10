@@ -1,8 +1,9 @@
 import { MovablePiece } from "./movable.piece";
-import { Board, Move, InternalMove, EndOfGame } from "./definitions";
+import { Board, Move, InternalMove, EndOfGame, Game } from "./definitions";
 import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
 import { halfDeepCopy, squareToIx, } from "./board.utils";
 import { figureCastleMoves, reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
+import { positionToFen, samePosition } from "../fen/fen.utils";
 
 export interface Position {
     readonly board: Board,
@@ -12,12 +13,13 @@ export interface Position {
     readonly ended?: EndOfGame,
     readonly fullMoves: number,
     readonly halfMoves: number,
+    readonly game: Game,
 
     getMoves(): Move[],
     play(move: Move | string): Position,
 }
 
-export type PositionPlain = Pick<Position, "board"|"sideToMove"|"castlings"> & {fullMoves?: number, halfMoves?: number};
+export type PositionPlain = Pick<Position, "board"|"sideToMove"|"castlings"> & {fullMoves?: number, halfMoves?: number, game?: Game};
 
 export function buildPosition(positionPlain: PositionPlain): Position {
     return new PositionImpl(positionPlain);
@@ -66,8 +68,18 @@ class PositionImpl implements Position {
         //console.log('board: ' + JSON.stringify(board));
         const fullMoves = this.sideToMove[0].color === 'black' ? this.fullMoves + 1 : this.fullMoves;
         const halfMoves = this.isTakeOrPawnMove(moveToPlay) ? 0 : this.halfMoves + 1;
+        const previousFens = [...this.game.previousFens];
+        previousFens.push(this.toFen());
+        const game = {previousFens};
 
-        return buildPosition({board, sideToMove, castlings, fullMoves, halfMoves});
+        return buildPosition({board, sideToMove, castlings, fullMoves, halfMoves, game});
+    }
+
+    private toFen(): string {
+        if (!this.game.currentFen) {
+            this.game.currentFen = positionToFen(this);
+        }
+        return this.game.currentFen;
     }
     
     private doGetMoves(): InternalMove[] {
@@ -87,8 +99,11 @@ class PositionImpl implements Position {
             return 'draw-fiftymoves';
         }
         // if too little material left -> draw TODO
-        // if same position repeated 3 times -> draw TODO
-        return undefined;
+     
+        // if current position already repeated twice
+        if (this.game.previousFens.filter((fen) => samePosition(fen, this.toFen())).length > 1) {
+            return 'draw-repetition';
+        }
     }
 
     private computeMoves() {
@@ -130,5 +145,10 @@ class PositionImpl implements Position {
     }
     public get halfMoves() {
         return this.position.halfMoves || 0;
+    }
+    public get game() {
+        return this.position.game || {previousFens:[], 
+            currentFen: undefined
+        };
     }
 }

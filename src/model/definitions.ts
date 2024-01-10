@@ -68,3 +68,8 @@ export type Castle = {
     move: Move,
     mutations: (board: Board) => Board,
 }
+
+export type Game = {
+    previousFens: string[],
+    currentFen?: string,
+}
