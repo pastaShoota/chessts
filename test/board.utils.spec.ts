@@ -1,4 +1,4 @@
-import { newChessBoard, halfDeepCopy, squareFromString } from "src/model/board.utils";
+import { newChessBoard, halfDeepCopy, squareFromString } from "src/utils/board.utils";
 
 describe("board utils", () => {
     describe("half deep copy", () => {

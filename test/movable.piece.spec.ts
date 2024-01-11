@@ -1,5 +1,5 @@
 import { positionFromFen } from "src/utils/fen.utils";
-import { squareToIx } from "src/model/board.utils";
+import { squareToIx } from "src/utils/board.utils";
 import { MovablePiece } from "src/model/movable.piece";
 
 describe('movable piece', () => {

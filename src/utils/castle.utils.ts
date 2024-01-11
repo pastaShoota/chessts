@@ -1,7 +1,7 @@
 import { halfDeepCopy, squareEqual, squareToIx } from "./board.utils";
-import { Move, InternalMove, Castle, Board } from "./definitions";
+import { Move, InternalMove, Castle, Board } from "../model/definitions";
 import { moveFromString } from "./piece.utils";
-import { Position } from "./position";
+import { Position } from "../model/position";
 
 type PreCastle = Omit<Castle, 'mutations'>;
 

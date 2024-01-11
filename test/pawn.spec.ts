@@ -1,6 +1,7 @@
 import { positionFromFen, startingPositionFen } from "src/utils/fen.utils";
-import { squareToIx } from "src/model/board.utils";
+import { squareToIx } from "src/utils/board.utils";
 import { MovablePiece } from "src/model/movable.piece";
+import { newStartingPos } from "src/model/position";
 
 describe('pawn', () => {
     describe('figure moves', () => {
@@ -116,25 +117,25 @@ describe('pawn', () => {
     });
     describe("en passant", () => {
         it("should set up", () => {
-            const pos = positionFromFen(startingPositionFen).play("E2 E4");
+            const pos = newStartingPos().play("E2 E4");
 
             expect(pos.board[squareToIx("E3")]).toHaveProperty("enPassantTarget", true);
         });
         it("should forget on next move", () => {
-            const pos = positionFromFen(startingPositionFen).play("E2 E4").play("E7 E5");
+            const pos = newStartingPos().play("E2 E4").play("E7 E5");
 
             expect(pos.board[squareToIx("E3")]).not.toHaveProperty("enPassantTarget");
             expect(pos.board[squareToIx("E6")]).toHaveProperty("enPassantTarget", true);
         });
         it("should land pawn on en passant target", () => {
-            const pos = positionFromFen(startingPositionFen).play("E2 E4").play("C7 C5").play("E4 E5").play("D7 D5").play("E5 D6") // <- take en passant
+            const pos = newStartingPos().play("E2 E4").play("C7 C5").play("E4 E5").play("D7 D5").play("E5 D6") // <- take en passant
                 .play("C5 C4").play("D2 D4").play("C4 D3"); // <- second take en passant (other side)
 
             expect(pos.board[squareToIx("D6")].occupant).toEqual(expect.objectContaining({ type: "pawn", color: "white"}));
             expect(pos.board[squareToIx("D3")].occupant).toEqual(expect.objectContaining({ type: "pawn", color: "black"}));
         });
         it("should pick up the pawn moved on previous move", () => {
-            const pos = positionFromFen(startingPositionFen).play("E2 E4").play("C7 C5").play("E4 E5").play("D7 D5").play("E5 D6") // <- take en passant
+            const pos = newStartingPos().play("E2 E4").play("C7 C5").play("E4 E5").play("D7 D5").play("E5 D6") // <- take en passant
                 .play("C5 C4").play("D2 D4").play("C4 D3"); // <- second take en passant (other side)
     
             expect(pos.board[squareToIx("D5")].occupant).toBeUndefined();

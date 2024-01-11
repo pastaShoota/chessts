@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "npx nodemon",
     "build": "tsc --build",
-    "test": "jest"
+    "test": "jest",
+    "start": "NODE_PATH=build node ./build"
   },
   "author": "thierry",
   "devDependencies": {

@@ -1,7 +1,7 @@
-import { newChessBoard, dummySquare, ixToCoordinates, ixToSquare } from "../model/board.utils";
+import { newChessBoard, dummySquare, ixToCoordinates, ixToSquare } from "./board.utils";
 import { Board, Square, Piece, Game } from "../model/definitions";
 import { MovablePiece } from "../model/movable.piece";
-import { toMovable } from "../model/piece.utils";
+import { toMovable } from "./piece.utils";
 import { Position, buildPosition } from "../model/position";
 
 type fenPieceCode = 'p'|'n'|'b'|'r'|'q'|'k'|'P'|'N'|'B'|'R'|'Q'|'K';

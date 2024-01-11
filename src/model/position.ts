@@ -1,9 +1,9 @@
 import { MovablePiece } from "./movable.piece";
 import { Board, Move, InternalMove, EndOfGame, Game } from "./definitions";
-import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
-import { halfDeepCopy, squareToIx, } from "./board.utils";
-import { figureCastleMoves, reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
-import { positionToFen, samePosition } from "src/utils/fen.utils";
+import { pieceComparator, toMovable, moveAsString, moveFromString } from "../utils/piece.utils";
+import { halfDeepCopy, squareToIx, } from "utils/board.utils";
+import { figureCastleMoves, reevaluateCastlings as reevaluateCastlingRights } from "utils/castle.utils";
+import { positionFromFen, positionToFen, samePosition, startingPositionFen } from "utils/fen.utils";
 
 export interface Position {
     readonly board: Board,
@@ -17,12 +17,17 @@ export interface Position {
 
     getMoves(): Move[],
     play(move: Move | string): Position,
+    toFen(): string,
 }
 
 export type PositionPlain = Pick<Position, "board"|"sideToMove"|"castlings"> & {fullMoves?: number, halfMoves?: number, game?: Game};
 
 export function buildPosition(positionPlain: PositionPlain): Position {
     return new PositionImpl(positionPlain);
+}
+
+export function newStartingPos(): Position {
+    return positionFromFen(startingPositionFen);
 }
 
 class PositionImpl implements Position {
@@ -75,7 +80,7 @@ class PositionImpl implements Position {
         return buildPosition({board, sideToMove, castlings, fullMoves, halfMoves, game});
     }
 
-    private toFen(): string {
+    public toFen(): string {
         if (!this.game.currentFen) {
             this.game.currentFen = positionToFen(this);
         }

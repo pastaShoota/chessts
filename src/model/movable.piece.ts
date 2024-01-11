@@ -1,6 +1,5 @@
-import { dummySquare, squareToIx } from "./board.utils";
+import { dummySquare, squareToIx } from "../utils/board.utils";
 import { Board, Direction, Directions, InternalMove, Piece, PieceColor, PieceType, Square } from "./definitions";
-import { opposite } from "./piece.utils";
 
 export abstract class MovablePiece implements Piece{
     public type: PieceType;
@@ -60,10 +59,10 @@ export abstract class MovablePiece implements Piece{
         const rookishTypes = ['rook', 'queen'];
         const bishopishTypes = ['bishop', 'queen'];
         return rookishDirections.flatMap((direction) => this.probe(board, direction, LONG_RANGE, square))
-            .filter((otherSquare) => otherSquare.occupant?.color === opposite(this.color) && rookishTypes.includes(otherSquare.occupant?.type))
+            .filter((otherSquare) => this.isOpponent(otherSquare.occupant) && rookishTypes.includes(otherSquare.occupant?.type+""))
             .length > 0 ||
             bishopishDirections.flatMap((direction) => this.probe(board, direction, LONG_RANGE, square))
-            .filter((otherSquare) => otherSquare.occupant?.color === opposite(this.color) && bishopishTypes.includes(otherSquare.occupant?.type))
+            .filter((otherSquare) => this.isOpponent(otherSquare.occupant) && bishopishTypes.includes(otherSquare.occupant?.type+""))
             .length > 0;
     }
 
@@ -80,7 +79,11 @@ export abstract class MovablePiece implements Piece{
         ];
         const RANGE = 1;
         return directions.flatMap((direction) => this.probe(board, direction, RANGE, square))
-            .filter((otherSquare) => otherSquare.occupant?.color === opposite(this.color) && 'knight' === otherSquare.occupant?.type)
+            .filter((otherSquare) => this.isOpponent(otherSquare.occupant) && 'knight' === otherSquare.occupant?.type)
             .length > 0;
+    }
+
+    protected isOpponent(piece?: Piece) {
+        return !!(piece && piece?.color !== this.color);
     }
 }

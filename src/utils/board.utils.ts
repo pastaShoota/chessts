@@ -1,4 +1,4 @@
-import { Board, FileNumber, RowNumber, Square } from "./definitions";
+import { Board, FileNumber, RowNumber, Square } from "src/model/definitions";
 
 export const dummySquare: Square = {file: 'A', row: 1};
 const lowSquare = dummySquare;

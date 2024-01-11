@@ -1,3 +1,9 @@
-const fenString = '8/5k2/3p4/1p1Pp2p/pP2Pp1P/P4P1K/8/8 b - - 99 50';
+import { newStartingPos } from "model/position";
 
-console.log(`my FEN string ${fenString}`);
+var pos = newStartingPos();
+
+// berger
+pos = pos.play("E2 E4").play("E7 E5").play("D1 H5").play("B8 C6").play("F1 C4").play("G8 F6").play("H5 F7");
+
+console.log(`ended: ${pos.ended}`);
+console.log(`fen: ${pos.toFen()}`);

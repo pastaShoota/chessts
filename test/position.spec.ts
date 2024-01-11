@@ -1,8 +1,9 @@
 import { positionFromFen, startingPositionFen } from "src/utils/fen.utils";
-import { squareFromString, squareToIx } from "src/model/board.utils";
+import { newStartingPos } from "src/model/position";
+import { squareFromString, squareToIx } from "src/utils/board.utils";
 import { EndOfGame } from "src/model/definitions";
 import { MovablePiece } from "src/model/movable.piece";
-import { moveFromString } from "src/model/piece.utils";
+import { moveFromString } from "src/utils/piece.utils";
 
 describe('position', () => {
     const initialPosWithJustKingsAndRooks = positionFromFen('r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1');
@@ -39,7 +40,7 @@ describe('position', () => {
     });
     describe('play move', () => {
         it('should produce the expected position from start', () => {
-            const pos = positionFromFen(startingPositionFen)
+            const pos = newStartingPos()
                 .play(moveFromString('E2 E4'))
                 .play(moveFromString('D7 D5'))
                 .play(moveFromString('F1 B5'))
@@ -54,12 +55,12 @@ describe('position', () => {
     describe('castling', () => {
         describe('castling right loss', () => {
             it('should have all four rights on initial pos', () => {
-                const pos = positionFromFen(startingPositionFen);
+                const pos = newStartingPos();
                 
                 expect(pos.castlings).toEqual('KQkq');
             });
             it('should remove both rights on king move', () => {
-            const pos = positionFromFen(startingPositionFen)
+            const pos = newStartingPos()
                 .play(moveFromString('F2 F4'))
                 .play(moveFromString('D7 D5'))
                 .play(moveFromString('E1 F2'))
@@ -68,7 +69,7 @@ describe('position', () => {
                 expect(pos.castlings).toEqual('kq');
             });
             it('should remove kingside right on kingrook move', () => {
-                const pos = positionFromFen(startingPositionFen)
+                const pos = newStartingPos()
                     .play(moveFromString('H2 H4'))
                     .play(moveFromString('D7 D5'))
                     .play(moveFromString('H1 H2'))
@@ -77,7 +78,7 @@ describe('position', () => {
                 expect(pos.castlings).toEqual('Qkq');
             });
             it('should remove queenside right on queenrook taken', () => {
-                const pos = positionFromFen(startingPositionFen)
+                const pos = newStartingPos()
                     .play('G2 G4').play('B7 B5')
                     .play('F1 G2').play('G8 F6')
                     .play('G2 A8')
@@ -95,7 +96,7 @@ describe('position', () => {
             ]);
  
             it('should not be allowed to castle while there are pieces in the way', () => {
-                let pos = positionFromFen(startingPositionFen)
+                let pos = newStartingPos()
                     .play('D2 D4').play('E7 E6');
                 expect(pos.getMoves()).not.toEqual(movesWithWhiteQueenCastlling);
                 
@@ -115,7 +116,7 @@ describe('position', () => {
                 expect(pos.getMoves()).toEqual(movesWithWhiteQueenCastlling);
             });
             it('should not be allowed to castle either side when in check', () => {
-                let pos = positionFromFen(startingPositionFen)
+                let pos = newStartingPos()
                     .play('D2 D4').play('E7 E6')
                     .play('C1 F4').play('G8 F6')
                     .play('D1 D3').play('F8 B4') // check!
@@ -167,7 +168,7 @@ describe('position', () => {
     });
     describe('checkmate', () => {
         it("should raise checkmate when it happens", () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
 
             expect(pos.ended).toBeFalsy();
             pos = pos.play("F2 F3").play("E7 E5");
@@ -199,7 +200,7 @@ describe('position', () => {
     });
     describe('full moves', () => {
         it('should increment each time it is white to play', () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
             
             expect(pos.fullMoves).toEqual(1);
             pos = pos.play("E2 E4");
@@ -214,12 +215,12 @@ describe('position', () => {
     });
     describe('half moves', () => {
         it('should start from zero', () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
             
             expect(pos.halfMoves).toEqual(0);
         });
         it('should increment on each non pawn nor take move', () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
             
             pos = pos.play("G1 F3");
             expect(pos.halfMoves).toEqual(1);
@@ -227,7 +228,7 @@ describe('position', () => {
             expect(pos.halfMoves).toEqual(4);
         });
         it('should restart from zero on a pawn move and on take move', () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
             
             pos = pos.play("E2 E4");
             expect(pos.halfMoves).toEqual(0);
@@ -237,7 +238,7 @@ describe('position', () => {
             expect(pos.halfMoves).toEqual(0);
         });
         it('should end when the move count reaches 100 (50 moves draw)', () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
 
             
             expect(pos.ended).toBeFalsy();
@@ -304,7 +305,7 @@ describe('position', () => {
         const drawRepetition: EndOfGame = 'draw-repetition';
 
         it("should happen as soon as the same position is reached the third time (regardless of enPassant target on the first occurrence)", () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
 
             pos = pos.play("D2 D4").play("D7 D5"); // First time reached (btw note that en passant target is now active, but should not count for future comparisons)
             expect(pos.ended).toBeFalsy();
@@ -316,7 +317,7 @@ describe('position', () => {
             expect(pos.ended).toEqual(drawRepetition);
         });
         it("should not happen if castling rights changed in between", () => {
-            let pos = positionFromFen(startingPositionFen);
+            let pos = newStartingPos();
 
             pos = pos.play("D2 D4").play("D7 D5"); // First time reached
             expect(pos.ended).toBeFalsy();

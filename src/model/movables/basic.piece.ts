@@ -1,6 +1,6 @@
-import { Board, Direction, InternalMove } from "../definitions";
-import { MovablePiece } from "../movable.piece";
-import { basicMutations } from "../piece.utils";
+import { Board, Direction, Move, InternalMove } from "model/definitions";
+import { MovablePiece } from "model/movable.piece";
+import { halfDeepCopy, squareToIx } from "utils/board.utils";
 
 export abstract class BasicPiece extends MovablePiece {
     protected abstract getRange(): number;
@@ -19,5 +19,15 @@ export abstract class BasicPiece extends MovablePiece {
                     verified: false,
                 }
             });
+    }
+}
+
+
+export function basicMutations(move: Move): (board: Board) => Board {
+    return (board: Board) => {
+        const targetBoard = halfDeepCopy(board);
+        delete targetBoard[squareToIx(move.source)].occupant;
+        targetBoard[squareToIx(move.target)].occupant = board[squareToIx(move.source)].occupant;
+        return targetBoard;
     }
 }

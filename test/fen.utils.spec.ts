@@ -1,7 +1,7 @@
-import { generateEmptyBoard, positionFromFen, positionToFen, startingPositionFen } from "./fen.utils";
-import { Piece } from "../model/definitions";
-import { MovablePiece } from "../model/movable.piece";
-import { Position } from "../model/position";
+import { generateEmptyBoard, positionFromFen, positionToFen, startingPositionFen } from "src/utils/fen.utils";
+import { Piece } from "src/model/definitions";
+import { MovablePiece } from "src/model/movable.piece";
+import { Position, newStartingPos } from "src/model/position";
 
 describe('fen utils', ()=>{
     describe('generate empty board', () => {
@@ -74,7 +74,7 @@ describe('fen utils', ()=>{
         });
     });
     describe("postion to fen", () => {
-        let pos = positionFromFen(startingPositionFen);
+        let pos = newStartingPos();
         let lastPos: Position;
         let fen: string;
         function testFen() {
@@ -132,7 +132,7 @@ describe('fen utils', ()=>{
         });
         it('should give correct castling rights when none left', () => {
 
-            pos = positionFromFen(startingPositionFen).play("E2 E4").play("E7 E5").play("G1 F3")
+            pos = newStartingPos().play("E2 E4").play("E7 E5").play("G1 F3")
             .play("B8 C6").play("H1 G1").play("D7 D5")
             .play("B1 C3").play("G8 F6").play("F1 E2")
             .play("F6 G8").play("E1 F1").play("E8 E7");

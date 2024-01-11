@@ -1,7 +1,7 @@
-import { squareToIx } from "../board.utils";
-import { Board, Direction, Directions, InternalMove, PieceType } from "../definitions";
+import { squareToIx } from "../../utils/board.utils";
+import { Board, Direction, Directions, InternalMove, Piece, PieceType } from "../definitions";
 import { MovablePiece } from "../movable.piece";
-import { basicMutations, opposite, toMovable } from "../piece.utils";
+import { basicMutations } from "./basic.piece";
 
 const [PAWN_STEP, PAWN_LEAP] = [1, 2];
 
@@ -27,9 +27,11 @@ export class Pawn extends MovablePiece {
         return PAWN_STEP;
     }
 
+    public static toMovable: (piece: Piece) => MovablePiece;
+
     public figureMoves(board: Board): InternalMove[] {
         const captureSquares = this.captureDirections().flatMap((direction) => super.probe(board, direction, PAWN_STEP))
-            .filter((finalSquare) => finalSquare.occupant?.color === opposite(this.color) || finalSquare.enPassantTarget);
+            .filter((finalSquare) => this.isOpponent(finalSquare.occupant) || finalSquare.enPassantTarget);
         const moveSquares = super.probe(board, this.moveDirection(), this.moveRange())
             .filter((finalSquare) => !finalSquare.occupant);
         return [...captureSquares, ...moveSquares].flatMap((finalSquare) => {
@@ -45,7 +47,7 @@ export class Pawn extends MovablePiece {
                         return {...result, promoteTo,
                         mutations: (board) => {
                             let targetBoard = basicMutations({source, target})(board);
-                            targetBoard[squareToIx(target)].occupant = toMovable({color: this.color, type: promoteTo});
+                            targetBoard[squareToIx(target)].occupant = Pawn.toMovable({color: this.color, type: promoteTo});
                             console.log('promoting to '+ promoteTo + ' ' + JSON.stringify(targetBoard[squareToIx(target)].occupant));
                             return targetBoard;
                         }}
