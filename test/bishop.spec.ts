@@ -1,4 +1,4 @@
-import { positionFromFen } from "../../fen/fen.utils";
+import { positionFromFen } from "src/utils/fen.utils";
 
 describe('bishop', () => {
     describe('figure moves', () => {

@@ -3,7 +3,7 @@ import { Board, Move, InternalMove, EndOfGame, Game } from "./definitions";
 import { pieceComparator, toMovable, moveAsString, moveFromString } from "./piece.utils";
 import { halfDeepCopy, squareToIx, } from "./board.utils";
 import { figureCastleMoves, reevaluateCastlings as reevaluateCastlingRights } from "./castle.utils";
-import { positionToFen, samePosition } from "../fen/fen.utils";
+import { positionToFen, samePosition } from "src/utils/fen.utils";
 
 export interface Position {
     readonly board: Board,

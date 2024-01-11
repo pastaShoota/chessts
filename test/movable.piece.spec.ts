@@ -1,6 +1,6 @@
-import { positionFromFen } from "../fen/fen.utils";
-import { squareToIx } from "./board.utils";
-import { MovablePiece } from "./movable.piece";
+import { positionFromFen } from "src/utils/fen.utils";
+import { squareToIx } from "src/model/board.utils";
+import { MovablePiece } from "src/model/movable.piece";
 
 describe('movable piece', () => {
     describe('is threatened', () => {

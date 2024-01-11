@@ -1,8 +1,8 @@
-import { positionFromFen, startingPositionFen } from "../fen/fen.utils";
-import { squareFromString, squareToIx } from "./board.utils";
-import { EndOfGame } from "./definitions";
-import { MovablePiece } from "./movable.piece";
-import { moveFromString } from "./piece.utils";
+import { positionFromFen, startingPositionFen } from "src/utils/fen.utils";
+import { squareFromString, squareToIx } from "src/model/board.utils";
+import { EndOfGame } from "src/model/definitions";
+import { MovablePiece } from "src/model/movable.piece";
+import { moveFromString } from "src/model/piece.utils";
 
 describe('position', () => {
     const initialPosWithJustKingsAndRooks = positionFromFen('r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1');

@@ -1,7 +1,6 @@
-import { positionFromFen, startingPositionFen } from "../../fen/fen.utils";
-import { squareToIx } from "../board.utils";
-import { MovablePiece } from "../movable.piece";
-import { moveFromString } from "../piece.utils";
+import { positionFromFen, startingPositionFen } from "src/utils/fen.utils";
+import { squareToIx } from "src/model/board.utils";
+import { MovablePiece } from "src/model/movable.piece";
 
 describe('pawn', () => {
     describe('figure moves', () => {
