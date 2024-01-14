@@ -45,6 +45,8 @@ class PositionImpl implements Position {
             return {source, target, promoteTo}; // only return Move fields
         });
     }
+
+    // getMovesAsStrings : string[] TODO if more convenient for clients
     
     play(moveArg: Move | string): Position {
         const move: Move = typeof moveArg === "string" ? moveFromString(moveArg as string) : moveArg as Move;

@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "npx nodemon",
     "build": "tsc --build",
+    "clean": "rm -rf ./lib",
     "test": "jest",
-    "start": "NODE_PATH=build node ./build"
+    "start": "NODE_PATH=lib node ./lib"
   },
   "author": "thierry",
   "devDependencies": {
