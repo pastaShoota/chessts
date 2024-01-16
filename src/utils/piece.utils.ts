@@ -1,4 +1,4 @@
-import { Bishop, King, Knight, Pawn, Queen, Rook } from "../model/movables";
+import { Bishop, King, Knight, Pawn, Queen, Rook } from "../model/movables/index";
 import { Move, Piece, FileNumber, RowNumber } from "../model/definitions";
 import { MovablePiece } from "../model/movable.piece";
 

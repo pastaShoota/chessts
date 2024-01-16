@@ -1,16 +1,19 @@
 {
-  "name": "chessts",
-  "version": "1.0.0",
+  "name": "@pastashoota/chessts",
+  "version": "0.1.0",
   "description": "implementation of chess rules",
-  "main": "index.js",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "files": [ "lib/"],
   "scripts": {
     "dev": "npx nodemon",
-    "build": "tsc --build",
+    "build": "tsc -p tsconfig-cjs.json && tsc -p tsconfig-esm.json",
     "clean": "rm -rf ./lib",
     "test": "jest",
-    "start": "NODE_PATH=lib node ./lib"
+    "prepublishOnly": "npm run clean && npm run build",
+    "start": "NODE_PATH=lib/esm node ./lib/esm"
   },
-  "author": "thierry",
+  "author": "pastashoota",
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@types/node": "^20.10.4",
